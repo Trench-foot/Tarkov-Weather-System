@@ -4,5 +4,6 @@
   "S_Windy": 5,
   "S_Misty": 15,
   "S_SunFog": 10,
-  "S_Sunny": 10
+  "S_Sunny": 10,
+  "S_FStorm": 10
 }

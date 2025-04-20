@@ -3,6 +3,7 @@
   "Se_Foggy": 20,
   "Se_Windy": 5,
   "Se_Misty": 15,
-  "Se_SunFog)": 15,
-  "Se_Sunny)": 15
+  "Se_SunFog": 15,
+  "Se_Sunny": 15,
+  "Se_FStorm": 15
 }

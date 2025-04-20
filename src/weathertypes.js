@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sunnyDefault = exports.blizzardDefault = exports.windyDefault = exports.foggySunnyDefault = exports.foggyDefault = exports.stormyDefault = exports.mistyDefault = exports.defaultWeather = exports.weatherMap = void 0;
+exports.sunnyDefault = exports.foggyStormDefault = exports.windyDefault = exports.foggySunnyDefault = exports.foggyDefault = exports.stormyDefault = exports.mistyDefault = exports.defaultWeather = exports.winterWeatherMap = exports.weatherMap = void 0;
 exports.weatherMap = {
     0: "Stormy",
     1: "Foggy",
@@ -8,7 +8,17 @@ exports.weatherMap = {
     3: "Misty",
     4: "Sunny fog",
     5: "Sunny",
-    7: "Blizzard",
+    6: "Foggy Storm",
+    8: "Debug",
+};
+exports.winterWeatherMap = {
+    0: "Heavy Snow",
+    1: "Foggy",
+    2: "Windy",
+    3: "Snow Flurries",
+    4: "Sunny fog",
+    5: "Sunny",
+    6: "Blizzard",
     8: "Debug",
 };
 exports.defaultWeather = {
@@ -224,7 +234,7 @@ exports.windyDefault = {
         max: 780,
     },
 };
-exports.blizzardDefault = {
+exports.foggyStormDefault = {
     ...exports.defaultWeather,
     clouds: {
         values: [-1, -0.8, -0.5, 0.1, 0, 0.4, 0.8, 1],

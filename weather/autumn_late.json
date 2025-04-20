@@ -4,5 +4,6 @@
   "Al_Windy": 5,
   "Al_Misty": 15,
   "Al_SunFog": 10,
-  "Al_Sunny": 10
+  "Al_Sunny": 10,
+  "Al_FStorm": 10
 }

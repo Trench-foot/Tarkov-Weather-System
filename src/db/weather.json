@@ -1,7 +1,8 @@
 {
-    "savedcurrentweather": 5,
-    "savedweathertext": "...sunnyDefault",
-    "weatherstart": 1745120633160,
-    "weatherlength": 95,
-    "weatherleft": 51
+    "savedcurrentweather": 4,
+    "savedweathername": "Sunny fog",
+    "savedweathertext": "...foggySunnyDefault",
+    "weatherstart": 1745162351714,
+    "weatherlength": 109,
+    "weatherleft": 64
 }

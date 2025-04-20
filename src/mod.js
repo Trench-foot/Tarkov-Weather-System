@@ -35,68 +35,73 @@ class TarkovWeatherSystem {
         config_json_1.resetWeather &&
             (0, utlis_1.setWeather)(WeatherValues, 8);
         //setSeason(SeasonValues);
+        if (utlis_1.savedSeason == 2) {
+            utlis_1.isWinter = true;
+        }
+        else {
+            utlis_1.isWinter = false;
+        }
         config_json_1.enable &&
             this.logger.log(`[TWS] Loaded....`, LogTextColor_1.LogTextColor.YELLOW);
         config_json_1.enableSeasons &&
             this.logger.log(`[TWS] Current season is: ${seasons_1.seasonMap[SeasonValues.overrideSeason]}`, LogTextColor_1.LogTextColor.CYAN);
-        config_json_1.enableWeather &&
+        config_json_1.enableWeather && !utlis_1.isWinter &&
             this.logger.log(`[TWS] Last weather front was: ${weathertypes_1.weatherMap[utlis_1.savedWeather]}`, LogTextColor_1.LogTextColor.CYAN);
+        config_json_1.enableWeather && utlis_1.isWinter &&
+            this.logger.log(`[TWS] Last weather front was: ${weathertypes_1.winterWeatherMap[utlis_1.savedWeather]}`, LogTextColor_1.LogTextColor.CYAN);
         // Set season and weather during client/items callback
-        config_json_1.enable && config_json_1.enableSeasons && config_json_1.enableWeather &&
+        config_json_1.enable &&
             staticRouterModService.registerStaticRouter("[TWS] /client/items", [
                 {
                     url: "/client/items",
                     action: async (_url, info, sessionId, output) => {
-                        // Attempt to fix the negative time left bug, 
-                        // should not come to this anymore
-                        if (utlis_1.savedWeatherTime < -1) {
-                            utlis_1.savedWeatherTime = (Date.now() - (utlis_1.weatherStartDate * 60000) + 15);
-                        }
                         let weather = this.getRandomWeather(container, SeasonValues);
-                        (0, utlis_1.setWeather)(WeatherValues, weather);
+                        if (config_json_1.enableWeather) {
+                            (0, utlis_1.setWeather)(WeatherValues, weather);
+                        }
                         config_json_1.consoleMessages &&
                             console.log(weather);
-                        (0, utlis_1.setSeason)(SeasonValues);
+                        if (config_json_1.enableSeasons) {
+                            (0, utlis_1.setSeason)(SeasonValues);
+                        }
                         return output;
                     },
                 },
             ], "[TWS] /client/items");
         // Set season and weather during client/game/logout callback
-        config_json_1.enable && config_json_1.enableSeasons && config_json_1.enableWeather &&
+        config_json_1.enable &&
             staticRouterModService.registerStaticRouter("[TWS] /client/game/logout", [
                 {
                     url: "/client/game/logout",
                     action: async (_url, info, sessionId, output) => {
-                        // Attempt to fix the negative time left bug, 
-                        // should not come to this anymore
-                        if (utlis_1.savedWeatherTime < -1) {
-                            utlis_1.savedWeatherTime = (Date.now() - (utlis_1.weatherStartDate * 60000) + 15);
-                        }
                         let weather = this.getRandomWeather(container, SeasonValues);
-                        (0, utlis_1.setWeather)(WeatherValues, weather);
+                        if (config_json_1.enableWeather) {
+                            (0, utlis_1.setWeather)(WeatherValues, weather);
+                        }
                         config_json_1.consoleMessages &&
                             console.log(weather);
-                        (0, utlis_1.setSeason)(SeasonValues);
+                        if (config_json_1.enableSeasons) {
+                            (0, utlis_1.setSeason)(SeasonValues);
+                        }
                         return output;
                     },
                 },
             ], "[TWS] /client/game/logout");
         // Set season and weather during client/game/keepalive callback
-        config_json_1.enable && config_json_1.enableSeasons && config_json_1.enableWeather &&
+        config_json_1.enable &&
             staticRouterModService.registerStaticRouter("[TWS] /client/game/keepalive", [
                 {
                     url: "/client/game/keepalive",
                     action: async (_url, info, sessionId, output) => {
-                        // Attempt to fix the negative time left bug, 
-                        // should not come to this anymore
-                        if (utlis_1.savedWeatherTime < -1) {
-                            utlis_1.savedWeatherTime = (Date.now() - (utlis_1.weatherStartDate * 60000) + 15);
-                        }
                         let weather = this.getRandomWeather(container, SeasonValues);
-                        (0, utlis_1.setWeather)(WeatherValues, weather);
+                        if (config_json_1.enableWeather) {
+                            (0, utlis_1.setWeather)(WeatherValues, weather);
+                        }
                         config_json_1.consoleMessages &&
                             console.log(weather);
-                        (0, utlis_1.setSeason)(SeasonValues);
+                        if (config_json_1.enableSeasons) {
+                            (0, utlis_1.setSeason)(SeasonValues);
+                        }
                         return output;
                     },
                 },
@@ -118,11 +123,6 @@ class TarkovWeatherSystem {
                 {
                     url: "/client/weather",
                     action: async (_url, info, sessionId, output) => {
-                        // Attempt to fix the negative time left bug, 
-                        // should not come to this anymore
-                        if (utlis_1.savedWeatherTime < -1) {
-                            utlis_1.savedWeatherTime = (Date.now() - (utlis_1.weatherStartDate * 60000) + 15);
-                        }
                         let weather = this.getRandomWeather(container, SeasonValues);
                         (0, utlis_1.setWeather)(WeatherValues, weather);
                         config_json_1.consoleMessages &&
@@ -131,6 +131,25 @@ class TarkovWeatherSystem {
                     },
                 },
             ], "[TWS] /client/weather");
+        // Set season and weather during client/items callback
+        config_json_1.enable && config_json_1.debugEnable &&
+            staticRouterModService.registerStaticRouter("[TWS] /launcher/server/version", [
+                {
+                    url: "/launcher/server/version",
+                    action: async (_url, info, sessionId, output) => {
+                        let weather = this.getRandomWeather(container, SeasonValues);
+                        if (config_json_1.enableWeather) {
+                            (0, utlis_1.setWeather)(WeatherValues, weather);
+                        }
+                        config_json_1.consoleMessages &&
+                            console.log(weather);
+                        if (config_json_1.enableSeasons) {
+                            (0, utlis_1.setSeason)(SeasonValues);
+                        }
+                        return output;
+                    },
+                },
+            ], "[TWS] /launcher/server/version");
     }
     // 95% of this function comes from random season ripoff, I hope bushtail doesn't mind
     getRandomWeather(container, SeasonValues) {
@@ -146,32 +165,32 @@ class TarkovWeatherSystem {
         if (SeasonValues.overrideSeason === 0) {
             config_json_1.consoleMessages &&
                 console.log("Setting Summer Weather");
-            weatherWeights = [summer_json_1.S_Stormy, summer_json_1.S_Foggy, summer_json_1.S_Windy, summer_json_1.S_Misty, summer_json_1.S_SunFog, summer_json_1.S_Sunny];
+            weatherWeights = [summer_json_1.S_Stormy, summer_json_1.S_Foggy, summer_json_1.S_Windy, summer_json_1.S_Misty, summer_json_1.S_SunFog, summer_json_1.S_Sunny, summer_json_1.S_FStorm];
         }
         else if (SeasonValues.overrideSeason === 1) {
             config_json_1.consoleMessages &&
                 console.log("Setting Autumn Weather");
-            weatherWeights = [autumn_json_1.A_Stormy, autumn_json_1.A_Foggy, autumn_json_1.A_Windy, autumn_json_1.A_Misty, autumn_json_1.A_SunFog, autumn_json_1.A_Sunny];
+            weatherWeights = [autumn_json_1.A_Stormy, autumn_json_1.A_Foggy, autumn_json_1.A_Windy, autumn_json_1.A_Misty, autumn_json_1.A_SunFog, autumn_json_1.A_Sunny, autumn_json_1.A_FStorm];
         }
         else if (SeasonValues.overrideSeason === 2) {
             config_json_1.consoleMessages &&
                 console.log("Setting Winter Weather");
-            weatherWeights = [winter_json_1.W_Stormy, winter_json_1.W_Foggy, winter_json_1.W_Windy, winter_json_1.W_Misty, winter_json_1.W_SunFog, winter_json_1.W_Sunny];
+            weatherWeights = [winter_json_1.W_HSnow, winter_json_1.W_Foggy, winter_json_1.W_Windy, winter_json_1.W_Flurry, winter_json_1.W_SunFog, winter_json_1.W_Sunny, winter_json_1.W_Blizzard];
         }
         else if (SeasonValues.overrideSeason === 3) {
             config_json_1.consoleMessages &&
                 console.log("Setting Spring Weather");
-            weatherWeights = [spring_json_1.Sr_Stormy, spring_json_1.Sr_Foggy, spring_json_1.Sr_Windy, spring_json_1.Sr_Misty, spring_json_1.Sr_SunFog, spring_json_1.Sr_Sunny];
+            weatherWeights = [spring_json_1.Sr_Stormy, spring_json_1.Sr_Foggy, spring_json_1.Sr_Windy, spring_json_1.Sr_Misty, spring_json_1.Sr_SunFog, spring_json_1.Sr_Sunny, spring_json_1.Sr_FStorm];
         }
         else if (SeasonValues.overrideSeason === 4) {
             config_json_1.consoleMessages &&
                 console.log("Setting Autumn_late Weather");
-            weatherWeights = [autumn_late_json_1.Al_Stormy, autumn_late_json_1.Al_Foggy, autumn_late_json_1.Al_Windy, autumn_late_json_1.Al_Misty, autumn_late_json_1.Al_SunFog, autumn_late_json_1.Al_Sunny];
+            weatherWeights = [autumn_late_json_1.Al_Stormy, autumn_late_json_1.Al_Foggy, autumn_late_json_1.Al_Windy, autumn_late_json_1.Al_Misty, autumn_late_json_1.Al_SunFog, autumn_late_json_1.Al_Sunny, autumn_late_json_1.Al_FStorm];
         }
         else if (SeasonValues.overrideSeason === 5) {
             config_json_1.consoleMessages &&
                 console.log("Setting Spring_early Weather");
-            weatherWeights = [spring_early_json_1.Se_Stormy, spring_early_json_1.Se_Foggy, spring_early_json_1.Se_Windy, spring_early_json_1.Se_Misty, spring_early_json_1.Se_SunFog, spring_early_json_1.Se_Sunny];
+            weatherWeights = [spring_early_json_1.Se_Stormy, spring_early_json_1.Se_Foggy, spring_early_json_1.Se_Windy, spring_early_json_1.Se_Misty, spring_early_json_1.Se_SunFog, spring_early_json_1.Se_Sunny, spring_early_json_1.Se_FStorm];
         }
         // Check if any value in weatherWeights is not a number or is negative, and returns if so
         if (weatherWeights.some(weight => typeof weight !== "number" || weight < 0)) {

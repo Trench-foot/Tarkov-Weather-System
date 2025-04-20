@@ -4,7 +4,6 @@
   "enableWeather": true,
   "foreverSummer": false,
   "endlessWinter": false,  
-  "seasonalRotation": false,
   
   "seasonLength": {
     "SUMMER": 2520,
@@ -12,13 +11,13 @@
     "WINTER": 2520,
     "SPRING": 1680,
     "AUTUMN_LATE": 840,
-    "SPRING_EARLY": 840,
-    "STORM": 0
+    "SPRING_EARLY": 840
   },
   
   "minWeatherDuration": 30,
   "maxWeatherDuration": 180,
   
   "resetWeather": false,
-  "consoleMessages": true
+  "debugEnable": false,
+  "consoleMessages": false
 }

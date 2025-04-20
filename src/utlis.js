@@ -23,10 +23,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setWeather = exports.setSeason = exports.savedDate = exports.savedTime = exports.savedSeason = exports.savedWeatherTime = exports.weatherDuration = exports.weatherStartDate = exports.savedWeatherText = exports.savedWeather = exports.weather = exports.seasonPath = exports.weatherPath = void 0;
+exports.setWeather = exports.setSeason = exports.savedDate = exports.savedTime = exports.savedSeason = exports.isWinter = exports.savedWeatherName = exports.savedWeatherTime = exports.weatherDuration = exports.weatherStartDate = exports.savedWeatherText = exports.savedWeather = exports.weather = exports.seasonPath = exports.weatherPath = void 0;
 const config_json_1 = require("../config/config.json");
 const weathertypes_1 = require("./weathertypes");
 const seasons_1 = require("./seasons");
+const weathertypes_2 = require("./weathertypes");
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 // Path to the save databases
@@ -39,8 +40,10 @@ exports.savedWeatherText = dbWeather.savedweathertext;
 exports.weatherStartDate = dbWeather.weatherstart;
 exports.weatherDuration = dbWeather.weatherlength;
 exports.savedWeatherTime = dbWeather.weatherleft;
+exports.savedWeatherName = dbWeather.savedweathername;
 // Reading the seasons database file
 const dbSeason = readJsonFile(exports.seasonPath);
+exports.isWinter = dbSeason.iswinter;
 exports.savedSeason = dbSeason.season;
 exports.savedTime = dbSeason.seasonleft;
 exports.savedDate = dbSeason.seasonstart;
@@ -54,6 +57,7 @@ const setSeason = (SeasonValues) => {
             exports.savedTime = 2000;
             SeasonValues["last"] = Date.now();
             SeasonValues.overrideSeason = 0;
+            exports.isWinter = false;
             config_json_1.consoleMessages &&
                 console.log("[TWS]  Bask in the glow of an endless summer.");
             break;
@@ -61,6 +65,7 @@ const setSeason = (SeasonValues) => {
             exports.savedTime = 2000;
             SeasonValues["last"] = Date.now();
             SeasonValues.overrideSeason = 2;
+            exports.isWinter = true;
             config_json_1.consoleMessages &&
                 console.log("[TWS]  Freeze in an endless winter.");
             break;
@@ -69,6 +74,7 @@ const setSeason = (SeasonValues) => {
             && SeasonValues.overrideSeason === 4:
             SeasonValues["last"] = Date.now();
             SeasonValues.overrideSeason = 2;
+            exports.isWinter = true;
             config_json_1.consoleMessages &&
                 console.log("[TWS] The season has changed! It is now:", seasons_1.seasonMap[SeasonValues.overrideSeason]);
             break;
@@ -77,6 +83,7 @@ const setSeason = (SeasonValues) => {
             && SeasonValues.overrideSeason === 2:
             SeasonValues["last"] = Date.now();
             SeasonValues.overrideSeason = 5;
+            exports.isWinter = false;
             config_json_1.consoleMessages &&
                 console.log("[TWS] The season has changed! It is now:", seasons_1.seasonMap[SeasonValues.overrideSeason]);
             break;
@@ -85,6 +92,7 @@ const setSeason = (SeasonValues) => {
             && SeasonValues.overrideSeason === 5:
             SeasonValues["last"] = Date.now();
             SeasonValues.overrideSeason = 3;
+            exports.isWinter = false;
             config_json_1.consoleMessages &&
                 console.log("[TWS] The season has changed! It is now:", seasons_1.seasonMap[SeasonValues.overrideSeason]);
             break;
@@ -93,6 +101,7 @@ const setSeason = (SeasonValues) => {
             && SeasonValues.overrideSeason === 3:
             SeasonValues["last"] = Date.now();
             SeasonValues.overrideSeason = 0;
+            exports.isWinter = false;
             config_json_1.consoleMessages &&
                 console.log("[TWS] The season has changed! It is now:", seasons_1.seasonMap[SeasonValues.overrideSeason]);
             break;
@@ -101,6 +110,7 @@ const setSeason = (SeasonValues) => {
             && SeasonValues.overrideSeason === 0:
             SeasonValues["last"] = Date.now();
             SeasonValues.overrideSeason = 1;
+            exports.isWinter = false;
             config_json_1.consoleMessages &&
                 console.log("[TWS] The season has changed! It is now:", seasons_1.seasonMap[SeasonValues.overrideSeason]);
             break;
@@ -109,6 +119,7 @@ const setSeason = (SeasonValues) => {
             && SeasonValues.overrideSeason === 1:
             SeasonValues["last"] = Date.now();
             SeasonValues.overrideSeason = 4;
+            exports.isWinter = false;
             config_json_1.consoleMessages &&
                 console.log("[TWS] The season has changed! It is now:", seasons_1.seasonMap[SeasonValues.overrideSeason]);
             break;
@@ -121,6 +132,7 @@ const setSeason = (SeasonValues) => {
     }
     // Begin season save data
     const newSeasonData = {
+        iswinter: exports.isWinter,
         season: SeasonValues.overrideSeason,
         seasontext: seasons_1.seasonMap[SeasonValues.overrideSeason],
         seasonstart: SeasonValues["last"],
@@ -146,8 +158,10 @@ const setWeather = (WeatherValues, randomWeather) => {
                 ...WeatherValues.weather,
                 ...weathertypes_1.stormyDefault,
             };
-            config_json_1.consoleMessages &&
-                console.log("[TWS] Setting stormy");
+            config_json_1.consoleMessages && !exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_1.weatherMap[exports.savedWeather]);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_2.winterWeatherMap[exports.savedWeather]);
             break;
         case exports.savedWeatherTime == weatherLowerClamp
             && currentWeather == 1:
@@ -160,8 +174,10 @@ const setWeather = (WeatherValues, randomWeather) => {
                 ...WeatherValues.weather,
                 ...weathertypes_1.foggyDefault,
             };
-            config_json_1.consoleMessages &&
-                console.log("[TWS] Setting foggy");
+            config_json_1.consoleMessages && !exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_1.weatherMap[exports.savedWeather]);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_2.winterWeatherMap[exports.savedWeather]);
             break;
         case exports.savedWeatherTime == weatherLowerClamp
             && currentWeather == 2:
@@ -174,8 +190,10 @@ const setWeather = (WeatherValues, randomWeather) => {
                 ...WeatherValues.weather,
                 ...weathertypes_1.windyDefault,
             };
-            config_json_1.consoleMessages &&
-                console.log("[TWS] Setting windy");
+            config_json_1.consoleMessages && !exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_1.weatherMap[exports.savedWeather]);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_2.winterWeatherMap[exports.savedWeather]);
             break;
         case exports.savedWeatherTime == weatherLowerClamp
             && currentWeather == 3:
@@ -188,8 +206,10 @@ const setWeather = (WeatherValues, randomWeather) => {
                 ...WeatherValues.weather,
                 ...weathertypes_1.mistyDefault,
             };
-            config_json_1.consoleMessages &&
-                console.log("[TWS] Setting moody");
+            config_json_1.consoleMessages && !exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_1.weatherMap[exports.savedWeather]);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_2.winterWeatherMap[exports.savedWeather]);
             break;
         case exports.savedWeatherTime == weatherLowerClamp
             && currentWeather == 4:
@@ -202,8 +222,10 @@ const setWeather = (WeatherValues, randomWeather) => {
                 ...WeatherValues.weather,
                 ...weathertypes_1.foggySunnyDefault,
             };
-            config_json_1.consoleMessages &&
-                console.log("[TWS] Setting sunny fog");
+            config_json_1.consoleMessages && !exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_1.weatherMap[exports.savedWeather]);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_2.winterWeatherMap[exports.savedWeather]);
             break;
         case exports.savedWeatherTime == weatherLowerClamp
             && currentWeather == 5:
@@ -216,22 +238,26 @@ const setWeather = (WeatherValues, randomWeather) => {
                 ...WeatherValues.weather,
                 ...weathertypes_1.sunnyDefault,
             };
-            config_json_1.consoleMessages &&
-                console.log("[TWS] Setting sunny");
+            config_json_1.consoleMessages && !exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_1.weatherMap[exports.savedWeather]);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_2.winterWeatherMap[exports.savedWeather]);
             break;
         case exports.savedWeatherTime == weatherLowerClamp
-            && currentWeather == 7:
+            && currentWeather == 6:
             exports.weatherDuration = getRandomWeatherDuration(config_json_1.minWeatherDuration, config_json_1.maxWeatherDuration);
             exports.savedWeatherTime = exports.weatherDuration;
             exports.weatherStartDate = Date.now();
             exports.savedWeather = currentWeather;
-            exports.savedWeatherText = "...blizzardDefault";
+            exports.savedWeatherText = "...foggyStormDefault";
             WeatherValues.weather = {
                 ...WeatherValues.weather,
-                ...weathertypes_1.blizzardDefault,
+                ...blizzardDefault,
             };
-            config_json_1.consoleMessages &&
-                console.log("[TWS] Setting blizzard");
+            config_json_1.consoleMessages && !exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_1.weatherMap[exports.savedWeather]);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_2.winterWeatherMap[exports.savedWeather]);
             break;
         case config_json_1.resetWeather:
             exports.weatherDuration = getRandomWeatherDuration(config_json_1.minWeatherDuration, config_json_1.maxWeatherDuration);
@@ -253,14 +279,22 @@ const setWeather = (WeatherValues, randomWeather) => {
             // Attempt to prevent weather from going crazy negative and breaking weather
             exports.savedWeatherTime = clamp(tempWeatherTime, weatherLowerClamp, config_json_1.maxWeatherDuration);
             ;
-            config_json_1.consoleMessages &&
+            if (exports.isWinter === false) {
+                exports.savedWeatherName = weathertypes_1.weatherMap[exports.savedWeather];
+            }
+            else if (exports.isWinter === true) {
+                exports.savedWeatherName = weathertypes_2.winterWeatherMap[exports.savedWeather];
+            }
+            config_json_1.consoleMessages && !exports.isWinter &&
                 console.log("[TWS] Current weather is still", weathertypes_1.weatherMap[exports.savedWeather] + ".", "Time until next weather front:", exports.savedWeatherTime, "Minutes.");
-            //console.log(savedWeather);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Current weather is still", weathertypes_2.winterWeatherMap[exports.savedWeather] + ".", "Time until next weather front:", exports.savedWeatherTime, "Minutes.");
             break;
     }
     // Begin weather save data
     const newWeatherData = {
         savedcurrentweather: exports.savedWeather,
+        savedweathername: exports.savedWeatherName,
         savedweathertext: exports.savedWeatherText,
         weatherstart: exports.weatherStartDate,
         weatherlength: exports.weatherDuration,
