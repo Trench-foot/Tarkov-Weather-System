@@ -1,8 +1,8 @@
 {
-    "savedcurrentweather": 3,
-    "savedweathername": "Snow Flurries",
-    "savedweathertext": "...mistyDefault",
-    "weatherstart": 1745208022111,
-    "weatherlength": 101,
-    "weatherleft": 47
+    "savedcurrentweather": 0,
+    "savedweathername": "Stormy",
+    "savedweathertext": "...stormyDefault",
+    "weatherstart": 1745272112932,
+    "weatherlength": 100,
+    "weatherleft": 99
 }

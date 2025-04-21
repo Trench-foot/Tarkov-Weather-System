@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setWeather = exports.setSeason = exports.SeasonValues = exports.savedDate = exports.savedTime = exports.seasonText = exports.savedSeason = exports.isWinter = exports.savedWeatherName = exports.savedWeatherTime = exports.weatherDuration = exports.weatherStartDate = exports.savedWeatherText = exports.savedWeather = exports.weather = exports.seasonPath = exports.weatherPath = void 0;
+exports.setWeather = exports.setSeason = exports.forceWeatherText = exports.forceWeatherType = exports.forceWeatherEnd = exports.forceSeasonType = exports.forceSeasonEnd = exports.SeasonValues = exports.WeatherValues = exports.savedDate = exports.savedTime = exports.seasonText = exports.savedSeason = exports.isWinter = exports.savedWeatherName = exports.savedWeatherTime = exports.weatherDuration = exports.weatherStartDate = exports.savedWeatherText = exports.savedWeather = exports.weather = exports.seasonPath = exports.weatherPath = void 0;
 const config_json_1 = require("../config/config.json");
 const weathertypes_1 = require("./weathertypes");
 const seasons_1 = require("./seasons");
@@ -50,10 +50,21 @@ exports.savedTime = dbSeason.seasonleft;
 exports.savedDate = dbSeason.seasonstart;
 // Used to clamp the bottom of time left on weather to 0
 let weatherLowerClamp = 0;
+// Used to force a season change with chatbot
+exports.forceSeasonEnd = false;
+// Used to force a weather change with chatbot
+exports.forceWeatherEnd = false;
 // Set season
 const setSeason = (SeasonValues) => {
     const currentSeason = seasons_1.seasonMap[SeasonValues.overrideSeason];
+    const forcedSeason = exports.forceSeasonType;
     switch (config_json_1.enableSeasons) {
+        case exports.forceSeasonEnd:
+            SeasonValues["last"] = Date.now();
+            SeasonValues.overrideSeason = forcedSeason;
+            config_json_1.consoleMessages &&
+                console.log("[TWS] The season has changed! It is now:", seasons_1.seasonMap[SeasonValues.overrideSeason]);
+            break;
         case (config_json_1.foreverSummer):
             exports.savedTime = 2000;
             SeasonValues["last"] = Date.now();
@@ -148,6 +159,21 @@ exports.setSeason = setSeason;
 const setWeather = (WeatherValues, randomWeather) => {
     let currentWeather = randomWeather;
     switch (config_json_1.enableWeather) {
+        case exports.forceWeatherEnd:
+            exports.weatherDuration = getRandomWeatherDuration(config_json_1.minWeatherDuration, config_json_1.maxWeatherDuration);
+            exports.savedWeatherTime = exports.weatherDuration;
+            exports.weatherStartDate = Date.now();
+            exports.savedWeather = currentWeather;
+            exports.savedWeatherText = exports.forceWeatherText;
+            WeatherValues.weather = {
+                ...WeatherValues.weather,
+                forceWeatherText: exports.forceWeatherText,
+            };
+            config_json_1.consoleMessages && !exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_1.weatherMap[exports.savedWeather]);
+            config_json_1.consoleMessages && exports.isWinter &&
+                console.log("[TWS] Setting", weathertypes_2.winterWeatherMap[exports.savedWeather]);
+            break;
         case exports.savedWeatherTime == weatherLowerClamp
             && currentWeather == 0:
             exports.weatherDuration = getRandomWeatherDuration(config_json_1.minWeatherDuration, config_json_1.maxWeatherDuration);

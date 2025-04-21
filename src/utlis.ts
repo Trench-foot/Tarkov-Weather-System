@@ -55,14 +55,36 @@ export let savedDate = dbSeason.seasonstart;
 // Used to clamp the bottom of time left on weather to 0
 let weatherLowerClamp = 0;
 
+export const WeatherValues;
 export const SeasonValues;
+
+// Used to force a season change with chatbot
+export const forceSeasonEnd = false;
+export const forceSeasonType;
+
+// Used to force a weather change with chatbot
+export const forceWeatherEnd = false;
+export const forceWeatherType;
+export const forceWeatherText;
 
 // Set season
 export const setSeason = (SeasonValues: IWeatherConfig) => {
 
 	const currentSeason = seasonMap[SeasonValues.overrideSeason];
+	const forcedSeason = forceSeasonType;
 			
 	switch (enableSeasons) {
+		case forceSeasonEnd:
+             SeasonValues["last"] = Date.now();
+			 SeasonValues.overrideSeason = forcedSeason;
+                  
+             consoleMessages &&
+				console.log(
+                "[TWS] The season has changed! It is now:",
+                seasonMap[SeasonValues.overrideSeason]
+                );
+                break;
+		
 		case (foreverSummer)
 			 savedTime = 2000;
              SeasonValues["last"] = Date.now();
@@ -213,7 +235,24 @@ export const setWeather = (WeatherValues: IWeatherConfig, randomWeather: number)
 	let currentWeather = randomWeather;
 	
 	switch (enableWeather) {
-	
+		
+		case 	forceWeatherEnd:
+				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
+				savedWeatherTime = weatherDuration;
+				weatherStartDate = Date.now();	
+				savedWeather = currentWeather;		
+				savedWeatherText =  forceWeatherText;
+				WeatherValues.weather = {
+				...WeatherValues.weather,
+				forceWeatherText,
+				};		
+				consoleMessages && !isWinter &&
+				  console.log("[TWS] Setting" weatherMap[savedWeather]);
+				  
+				consoleMessages && isWinter &&
+				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
+				break;
+		
 		case 	savedWeatherTime == weatherLowerClamp
 				&& currentWeather == 0:
 				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);

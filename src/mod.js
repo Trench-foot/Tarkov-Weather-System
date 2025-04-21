@@ -20,7 +20,7 @@ class TarkovWeatherSystem {
     preSptLoad(container) {
         this.logger = container.resolve("WinstonLogger");
         const configServer = container.resolve("ConfigServer");
-        const WeatherValues = configServer.getConfig(ConfigTypes_1.ConfigTypes.WEATHER);
+        let WeatherValues = configServer.getConfig(ConfigTypes_1.ConfigTypes.WEATHER);
         let SeasonValues = configServer.getConfig(ConfigTypes_1.ConfigTypes.WEATHER);
         // Values to attempt to set a delayed transition of seasons when gaming sessions have long separations
         let differenceSeasonDate = (Date.now() - utlis_1.savedDate);
@@ -137,6 +137,28 @@ class TarkovWeatherSystem {
                     },
                 },
             ], "[TWS] /client/weather");
+        // Set weather during client/mail/msg/send callback
+        // if forcing weather with chatbot
+        config_json_1.enable &&
+            staticRouterModService.registerStaticRouter("[TWS] /client/mail/msg/send", [
+                {
+                    url: "/client/mail/msg/send",
+                    action: async (_url, info, sessionId, output) => {
+                        if (utlis_1.forceWeatherEnd && config_json_1.enableWeather) {
+                            let weather = utlis_1.forceWeatherType;
+                            (0, utlis_1.setWeather)(WeatherValues, weather);
+                            config_json_1.consoleMessages &&
+                                console.log(weather);
+                        }
+                        if (utlis_1.forceSeasonEnd && config_json_1.enableSeasons) {
+                            (0, utlis_1.setSeason)(SeasonValues);
+                        }
+                        utlis_1.forceSeasonEnd = false;
+                        utlis_1.forceWeatherEnd = false;
+                        return output;
+                    },
+                },
+            ], "[TWS] /client/mail/msg/send");
         // Set season and weather during client/items callback
         config_json_1.enable && config_json_1.debugEnable &&
             staticRouterModService.registerStaticRouter("[TWS] /launcher/server/version", [

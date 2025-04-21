@@ -6,7 +6,19 @@ import { IUserDialogInfo } from "@spt/models/eft/profile/IUserDialogInfo";
 import { MemberCategory } from "@spt/models/enums/MemberCategory";
 import { MailSendService } from "@spt/services/MailSendService";
 
-import { SeasonValues, setSeason, savedWeather, savedSeason, isWinter, seasonText } from "../utlis";
+//import { enable, enableSeasons, enableWeather } from ".../config/config.json";
+import { 
+  SeasonValues, 
+  savedWeather, 
+  savedSeason, 
+  isWinter, 
+  seasonText, 
+  forceWeatherEnd, 
+  forceWeatherType, 
+  forceWeatherText,
+  forceSeasonEnd,
+  forceSeasonType,
+  } from "../utlis";
 import { weatherMap, winterWeatherMap } from "../weathertypes";
 
 
@@ -35,27 +47,216 @@ export class WeatherService implements IDialogueChatBot
 
     public handleMessage(sessionId: string, request: ISendMessageRequest): string
     {
-		if(request.text === "forecast" && isWinter) {
-			this.mailSendService.sendUserMessageToPlayer(
-				sessionId,
-				this.getChatBot(),
-				`This is Bolt Lightning!  Your number 1 weather man in Tarkov.  Current season is: \n${seasonText}  Current weather is \n${winterWeatherMap[savedWeather]}`,
+		switch(true) {
+			
+			case request.text === "forecast" && isWinter:
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`This is Bolt Lightning!  Your number 1 weather man in Tarkov.  Current season is: \n${seasonText}  Current weather is: \n${winterWeatherMap[savedWeather]}`,
 			);
 			return request.dialogId;
-		} else if(request.text === "forecast" && !isWinter) {
-			this.mailSendService.sendUserMessageToPlayer(
-				sessionId,
-				this.getChatBot(),
-				`This is Bolt Lightning!  Your number 1 weather man in Tarkov.  Current season is: \n${seasonText}  Current weather is \n${winterWeatherMap[savedWeather]}`,
+			break;
+			
+			case request.text === "forecast" && !isWinter:
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`This is Bolt Lightning!  Your number 1 weather man in Tarkov.  Current season is: \n${seasonText}  Current weather is: \n${weatherMap[savedWeather]}`,
 			);
 			return request.dialogId;
-		} else {
-			this.mailSendService.sendUserMessageToPlayer(
-            sessionId,
-            this.getChatBot(),
-            `This is Bolt Lightning!  Your number 1 weather man in Tarkov.  I just reply back what you typed to me!:\n${request.text}`,
+			break;
+			
+			case request.text == "Force Stormy":
+				forceWeatherEnd = true;
+				forceWeatherType = 0;
+				forceWeatherText = "...stormyDefault";
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing storms`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Foggy":
+				forceWeatherEnd = true;
+				forceWeatherType = 1;
+				forceWeatherText = "...foggyDefault";
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing fog`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Windy":
+				forceWeatherEnd = true;
+				forceWeatherType = 2;
+				forceWeatherText = "...windyDefault";
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing high winds`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Misty":
+				forceWeatherEnd = true;
+				forceWeatherType = 3;
+				forceWeatherText = "...mistyDefault";
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing misty light rain`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Foggy Sunny":
+				forceWeatherEnd = true;
+				forceWeatherType = 4;
+				forceWeatherText = "...foggySunnyDefault";
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing sunny fog`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Sunny":
+				forceWeatherEnd = true;
+				forceWeatherType = 5;
+				forceWeatherText = "...sunnyDefault";
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing sunny`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Foggy Stormy":
+				forceWeatherEnd = true;
+				forceWeatherType = 6;
+				forceWeatherText = "...foggyStormyDefault";
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing heavy storms and fog`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Blizzard":
+				forceWeatherEnd = true;
+				forceWeatherType = 6;
+				forceWeatherText = "...foggyStormyDefault";
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing blizzards`,
+				);
+				return request.dialogId;
+				break;
+			
+			case request.text == "Force Summer":
+				forceSeasonEnd = true;
+				forceSeasonType = 0;
+				isWinter = false;
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing summer`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Autumn":
+				forceSeasonEnd = true;
+				forceSeasonType = 1;
+				isWinter = false;
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing autumn`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Winter":
+				forceSeasonEnd = true;
+				forceSeasonType = 2;
+				isWinter = true;
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing winter`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Spring":
+				forceSeasonEnd = true;
+				forceSeasonType = 3;
+				isWinter = false;
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing spring`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Late Autumn":
+				forceSeasonEnd = true;
+				forceSeasonType = 4;
+				isWinter = false;
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing late autumn`,
+				);
+				return request.dialogId;
+				break;
+				
+			case request.text == "Force Early Spring":
+				forceSeasonEnd = true;
+				forceSeasonType = 5;
+				isWinter = false;
+				
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`Forcing early spring`,
+				);
+				return request.dialogId;
+				break;
+				
+			default:
+				this.mailSendService.sendUserMessageToPlayer(
+					sessionId,
+					this.getChatBot(),
+					`This is Bolt Lightning!  Your number 1 weather man in Tarkov.  I just reply back what you typed to me!:\n${request.text}`,
 			);
 			return request.dialogId;
+			break;
 		}
     }
 }

@@ -31,6 +31,7 @@ import { Al_Stormy, Al_Foggy, Al_Windy, Al_Misty, Al_SunFog, Al_Sunny, Al_FStorm
 import { Se_Stormy, Se_Foggy, Se_Windy, Se_Misty, Se_SunFog, Se_Sunny, Se_FStorm } from "../weather/spring_early.json";
 
 import { 
+	WeatherValues;
 	SeasonValues,
 	isWinter,
 	savedSeason,
@@ -38,8 +39,12 @@ import {
 	setSeason, 
 	setWeather, 
 	weather,
+	weatherDuration,
 	savedWeatherTime,
 	savedWeather,
+	forceWeatherEnd,
+	forceWeatherType,
+	forceSeasonEnd,
 } from "./utlis";
 import { seasonMap, seasonDates } from "./seasons";
 import { weatherMap, winterWeatherMap } from "./weathertypes";
@@ -56,7 +61,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	this.logger = container.resolve<ILogger>("WinstonLogger");
 	
     const configServer = container.resolve<ConfigServer>("ConfigServer");
-    const WeatherValues = configServer.getConfig<IWeatherConfig>(
+    let WeatherValues = configServer.getConfig<IWeatherConfig>(
       ConfigTypes.WEATHER
     );
 	let SeasonValues = configServer.getConfig<IWeatherConfig>(
@@ -250,6 +255,40 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
         "[TWS] /client/weather",
       );
 	  
+	// Set weather during client/mail/msg/send callback
+	// if forcing weather with chatbot
+	enable &&
+      staticRouterModService.registerStaticRouter(
+        "[TWS] /client/mail/msg/send",
+        [
+          {
+            url: "/client/mail/msg/send",
+            action: async (_url, info, sessionId, output) => {
+			
+			if (forceWeatherEnd && enableWeather) {
+				let weather = forceWeatherType;
+			
+				setWeather(WeatherValues, weather);
+			
+				consoleMessages &&
+				  console.log(weather);
+				}
+				
+			if (forceSeasonEnd && enableSeasons) {
+				setSeason(SeasonValues);
+				}
+				
+			forceSeasonEnd = false;
+				
+			forceWeatherEnd = false;
+			
+			return output;
+            },
+          },
+        ],
+        "[TWS] /client/mail/msg/send",
+      );
+
 	// Set season and weather during client/items callback
 	enable && debugEnable &&
       staticRouterModService.registerStaticRouter(
