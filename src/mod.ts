@@ -1,11 +1,22 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer } from "tsyringe";
 import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
+import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
+import { DialogueController } from "@spt/controllers/DialogueController";
+import { CustomChatBot } from "./CustomChatBot";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { LogBackgroundColor } from "@spt/models/spt/logging/LogBackgroundColor";
+import { ConfigServer } from "@spt/servers/ConfigServer";
+import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
+import { IWeatherConfig } from "@spt/models/spt/config/IWeatherConfig";
+import { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
+import * as fs from "fs";
+
 import {
 	enable,
+	foreverSummer,
+	endlessWinter,
 	enableSeasons,
 	enableWeather,
 	consoleMessages,
@@ -18,11 +29,9 @@ import { Sr_Stormy, Sr_Foggy, Sr_Windy, Sr_Misty, Sr_SunFog, Sr_Sunny, Sr_FStorm
 import { W_HSnow, W_Foggy, W_Windy, W_Flurry, W_SunFog, W_Sunny, W_Blizzard } from "../weather/winter.json";
 import { Al_Stormy, Al_Foggy, Al_Windy, Al_Misty, Al_SunFog, Al_Sunny, Al_FStorm } from "../weather/autumn_late.json";
 import { Se_Stormy, Se_Foggy, Se_Windy, Se_Misty, Se_SunFog, Se_Sunny, Se_FStorm } from "../weather/spring_early.json";
-import { ConfigServer } from "@spt/servers/ConfigServer";
-import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
-import { IWeatherConfig } from "@spt/models/spt/config/IWeatherConfig";
-import { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
+
 import { 
+	SeasonValues,
 	isWinter,
 	savedSeason,
 	savedDate,
@@ -34,9 +43,11 @@ import {
 } from "./utlis";
 import { seasonMap, seasonDates } from "./seasons";
 import { weatherMap, winterWeatherMap } from "./weathertypes";
-import * as fs from "fs";
+//import { WeatherCommands } from "./chatbot/WeatherCommands";
+import { WeatherService } from "./chatbot/WeatherService";
 
-class TarkovWeatherSystem implements IPreSptLoadMod {
+
+class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
   
   // Logger instance
   private logger: ILogger;
@@ -48,7 +59,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod {
     const WeatherValues = configServer.getConfig<IWeatherConfig>(
       ConfigTypes.WEATHER
     );
-	const SeasonValues = configServer.getConfig<IWeatherConfig>(
+	let SeasonValues = configServer.getConfig<IWeatherConfig>(
       ConfigTypes.WEATHER
     );
 	
@@ -82,9 +93,19 @@ class TarkovWeatherSystem implements IPreSptLoadMod {
 		isWinter = false;
 	}
 	
-	enable &&
+	enable && !foreverSummer && !endlessWinter &&
 	  this.logger.log(
         `[TWS] Loaded....`
+		LogTextColor.YELLOW);
+		
+	enable && foreverSummer &&
+	  this.logger.log(
+        `[TWS] Oh you sweet summer child....`
+		LogTextColor.YELLOW);
+		
+	enable && endlessWinter &&
+	  this.logger.log(
+        `[TWS] Brace yourself, winter is here....`
 		LogTextColor.YELLOW);
 	
 	enableSeasons &&
@@ -258,6 +279,19 @@ class TarkovWeatherSystem implements IPreSptLoadMod {
         "[TWS] /launcher/server/version",
       );
   }
+  
+	public postDBLoad(container: DependencyContainer): void {
+		
+		// We register and re-resolve the dependency so the 
+		// container takes care of filling in the command dependencies
+		container.register<WeatherService>("WeatherService", WeatherService);
+		//container.register<WeatherCommands>("WeatherCommands", WeatherCommands);
+		
+		container
+		  .resolve<DialogueController>("DialogueController")
+		  .registerChatBot(container.resolve<WeatherService>("WeatherService"));
+	}
+
 	// 95% of this function comes from random season ripoff, I hope bushtail doesn't mind
     private getRandomWeather(container: DependencyContainer, SeasonValues: IWeatherConfig): number {
 		
@@ -327,5 +361,9 @@ class TarkovWeatherSystem implements IPreSptLoadMod {
         throw new Error("Failed to select a weather based on weightings.")
     }
 }
+
+
+
+
 
 module.exports = { mod: new TarkovWeatherSystem() };

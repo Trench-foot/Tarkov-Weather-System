@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const LogTextColor_1 = require("C:/snapshot/project/obj/models/spt/logging/LogTextColor");
+const ConfigTypes_1 = require("C:/snapshot/project/obj/models/enums/ConfigTypes");
 const config_json_1 = require("../config/config.json");
 const summer_json_1 = require("../weather/summer.json");
 const autumn_json_1 = require("../weather/autumn.json");
@@ -8,10 +9,11 @@ const spring_json_1 = require("../weather/spring.json");
 const winter_json_1 = require("../weather/winter.json");
 const autumn_late_json_1 = require("../weather/autumn_late.json");
 const spring_early_json_1 = require("../weather/spring_early.json");
-const ConfigTypes_1 = require("C:/snapshot/project/obj/models/enums/ConfigTypes");
 const utlis_1 = require("./utlis");
 const seasons_1 = require("./seasons");
 const weathertypes_1 = require("./weathertypes");
+//import { WeatherCommands } from "./chatbot/WeatherCommands";
+const WeatherService_1 = require("./chatbot/WeatherService");
 class TarkovWeatherSystem {
     // Logger instance
     logger;
@@ -19,7 +21,7 @@ class TarkovWeatherSystem {
         this.logger = container.resolve("WinstonLogger");
         const configServer = container.resolve("ConfigServer");
         const WeatherValues = configServer.getConfig(ConfigTypes_1.ConfigTypes.WEATHER);
-        const SeasonValues = configServer.getConfig(ConfigTypes_1.ConfigTypes.WEATHER);
+        let SeasonValues = configServer.getConfig(ConfigTypes_1.ConfigTypes.WEATHER);
         // Values to attempt to set a delayed transition of seasons when gaming sessions have long separations
         let differenceSeasonDate = (Date.now() - utlis_1.savedDate);
         let serverSeasonDate = (Date.now() - differenceSeasonDate);
@@ -41,8 +43,12 @@ class TarkovWeatherSystem {
         else {
             utlis_1.isWinter = false;
         }
-        config_json_1.enable &&
+        config_json_1.enable && !config_json_1.foreverSummer && !config_json_1.endlessWinter &&
             this.logger.log(`[TWS] Loaded....`, LogTextColor_1.LogTextColor.YELLOW);
+        config_json_1.enable && config_json_1.foreverSummer &&
+            this.logger.log(`[TWS] Oh you sweet summer child....`, LogTextColor_1.LogTextColor.YELLOW);
+        config_json_1.enable && config_json_1.endlessWinter &&
+            this.logger.log(`[TWS] Brace yourself, winter is here....`, LogTextColor_1.LogTextColor.YELLOW);
         config_json_1.enableSeasons &&
             this.logger.log(`[TWS] Current season is: ${seasons_1.seasonMap[SeasonValues.overrideSeason]}`, LogTextColor_1.LogTextColor.CYAN);
         config_json_1.enableWeather && !utlis_1.isWinter &&
@@ -150,6 +156,15 @@ class TarkovWeatherSystem {
                     },
                 },
             ], "[TWS] /launcher/server/version");
+    }
+    postDBLoad(container) {
+        // We register and re-resolve the dependency so the 
+        // container takes care of filling in the command dependencies
+        container.register("WeatherService", WeatherService_1.WeatherService);
+        //container.register<WeatherCommands>("WeatherCommands", WeatherCommands);
+        container
+            .resolve("DialogueController")
+            .registerChatBot(container.resolve("WeatherService"));
     }
     // 95% of this function comes from random season ripoff, I hope bushtail doesn't mind
     getRandomWeather(container, SeasonValues) {

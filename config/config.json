@@ -19,5 +19,5 @@
   
   "resetWeather": false,
   "debugEnable": false,
-  "consoleMessages": false
+  "consoleMessages": true
 }

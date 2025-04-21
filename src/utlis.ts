@@ -48,13 +48,14 @@ export let savedWeatherName = dbWeather.savedweathername;
 const dbSeason = readJsonFile(seasonPath);
 export let isWinter = dbSeason.iswinter;
 export let savedSeason = dbSeason.season;
+export let seasonText = dbSeason.seasontext
 export let savedTime = dbSeason.seasonleft;
 export let savedDate = dbSeason.seasonstart;
 
 // Used to clamp the bottom of time left on weather to 0
 let weatherLowerClamp = 0;
 
-
+export const SeasonValues;
 
 // Set season
 export const setSeason = (SeasonValues: IWeatherConfig) => {

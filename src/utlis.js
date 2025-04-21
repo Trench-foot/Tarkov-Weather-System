@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setWeather = exports.setSeason = exports.savedDate = exports.savedTime = exports.savedSeason = exports.isWinter = exports.savedWeatherName = exports.savedWeatherTime = exports.weatherDuration = exports.weatherStartDate = exports.savedWeatherText = exports.savedWeather = exports.weather = exports.seasonPath = exports.weatherPath = void 0;
+exports.setWeather = exports.setSeason = exports.SeasonValues = exports.savedDate = exports.savedTime = exports.seasonText = exports.savedSeason = exports.isWinter = exports.savedWeatherName = exports.savedWeatherTime = exports.weatherDuration = exports.weatherStartDate = exports.savedWeatherText = exports.savedWeather = exports.weather = exports.seasonPath = exports.weatherPath = void 0;
 const config_json_1 = require("../config/config.json");
 const weathertypes_1 = require("./weathertypes");
 const seasons_1 = require("./seasons");
@@ -45,6 +45,7 @@ exports.savedWeatherName = dbWeather.savedweathername;
 const dbSeason = readJsonFile(exports.seasonPath);
 exports.isWinter = dbSeason.iswinter;
 exports.savedSeason = dbSeason.season;
+exports.seasonText = dbSeason.seasontext;
 exports.savedTime = dbSeason.seasonleft;
 exports.savedDate = dbSeason.seasonstart;
 // Used to clamp the bottom of time left on weather to 0
