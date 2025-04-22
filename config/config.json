@@ -18,6 +18,6 @@
   "maxWeatherDuration": 180,
   
   "resetWeather": false,
-  "debugEnable": true,
-  "consoleMessages": true
+  "debugEnable": false,
+  "consoleMessages": false
 }
