@@ -21,6 +21,12 @@ import {
   } from "../utlis";
 import { weatherMap, winterWeatherMap } from "../weathertypes";
 
+import { 
+  testText, 
+  winterForecast,
+  notWinterForecast,
+  } from "./WeatherResponses";
+
 
 //    \/   dont forger this annotation here!
 @injectable()
@@ -44,17 +50,23 @@ export class WeatherService implements IDialogueChatBot
             },
         };
     }
-
+	
+	
+	
     public handleMessage(sessionId: string, request: ISendMessageRequest): string
     {
+		// This whole switch function is way too long IMO
+		// I should probably find a better way
 		switch(true) {
 			
 			case request.text === "forecast" && isWinter:
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
 					this.getChatBot(),
-					`This is Bolt Lightning!  Your number 1 weather man in Tarkov.  Current season is: \n${seasonText}  Current weather is: \n${winterWeatherMap[savedWeather]}`,
-			);
+					`This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
+					`Current season is: ${seasonText}\n` +
+					`Current weather is: ${winterWeatherMap[savedWeather]}`,
+				);
 			return request.dialogId;
 			break;
 			
@@ -62,15 +74,16 @@ export class WeatherService implements IDialogueChatBot
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
 					this.getChatBot(),
-					`This is Bolt Lightning!  Your number 1 weather man in Tarkov.  Current season is: \n${seasonText}  Current weather is: \n${weatherMap[savedWeather]}`,
-			);
+					`This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
+					`Current season is: ${seasonText}\n` +
+					`Current weather is: \n${weatherMap[savedWeather]}`,
+				);
 			return request.dialogId;
 			break;
 			
 			case request.text == "Force Stormy":
 				forceWeatherEnd = true;
 				forceWeatherType = 0;
-				forceWeatherText = "...stormyDefault";
 				
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
@@ -83,7 +96,6 @@ export class WeatherService implements IDialogueChatBot
 			case request.text == "Force Foggy":
 				forceWeatherEnd = true;
 				forceWeatherType = 1;
-				forceWeatherText = "...foggyDefault";
 				
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
@@ -96,7 +108,6 @@ export class WeatherService implements IDialogueChatBot
 			case request.text == "Force Windy":
 				forceWeatherEnd = true;
 				forceWeatherType = 2;
-				forceWeatherText = "...windyDefault";
 				
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
@@ -109,7 +120,6 @@ export class WeatherService implements IDialogueChatBot
 			case request.text == "Force Misty":
 				forceWeatherEnd = true;
 				forceWeatherType = 3;
-				forceWeatherText = "...mistyDefault";
 				
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
@@ -122,7 +132,6 @@ export class WeatherService implements IDialogueChatBot
 			case request.text == "Force Foggy Sunny":
 				forceWeatherEnd = true;
 				forceWeatherType = 4;
-				forceWeatherText = "...foggySunnyDefault";
 				
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
@@ -135,7 +144,6 @@ export class WeatherService implements IDialogueChatBot
 			case request.text == "Force Sunny":
 				forceWeatherEnd = true;
 				forceWeatherType = 5;
-				forceWeatherText = "...sunnyDefault";
 				
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
@@ -148,7 +156,6 @@ export class WeatherService implements IDialogueChatBot
 			case request.text == "Force Foggy Stormy":
 				forceWeatherEnd = true;
 				forceWeatherType = 6;
-				forceWeatherText = "...foggyStormyDefault";
 				
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
@@ -161,7 +168,6 @@ export class WeatherService implements IDialogueChatBot
 			case request.text == "Force Blizzard":
 				forceWeatherEnd = true;
 				forceWeatherType = 6;
-				forceWeatherText = "...foggyStormyDefault";
 				
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
@@ -253,7 +259,7 @@ export class WeatherService implements IDialogueChatBot
 				this.mailSendService.sendUserMessageToPlayer(
 					sessionId,
 					this.getChatBot(),
-					`This is Bolt Lightning!  Your number 1 weather man in Tarkov.  I just reply back what you typed to me!:\n${request.text}`,
+					testText
 			);
 			return request.dialogId;
 			break;

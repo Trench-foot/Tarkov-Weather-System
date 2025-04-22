@@ -1,8 +1,8 @@
 {
-    "savedcurrentweather": 0,
-    "savedweathername": "Stormy",
-    "savedweathertext": "...stormyDefault",
-    "weatherstart": 1745272112932,
-    "weatherlength": 100,
-    "weatherleft": 99
+    "savedcurrentweather": 6,
+    "savedweathername": "Blizzard",
+    "savedweathertext": "...foggyStormDefault",
+    "weatherstart": 1745289231909,
+    "weatherlength": 154,
+    "weatherleft": 150
 }

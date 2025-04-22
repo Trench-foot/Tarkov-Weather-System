@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const LogTextColor_1 = require("C:/snapshot/project/obj/models/spt/logging/LogTextColor");
 const ConfigTypes_1 = require("C:/snapshot/project/obj/models/enums/ConfigTypes");
+// various config files
 const config_json_1 = require("../config/config.json");
 const summer_json_1 = require("../weather/summer.json");
 const autumn_json_1 = require("../weather/autumn.json");
@@ -9,10 +10,10 @@ const spring_json_1 = require("../weather/spring.json");
 const winter_json_1 = require("../weather/winter.json");
 const autumn_late_json_1 = require("../weather/autumn_late.json");
 const spring_early_json_1 = require("../weather/spring_early.json");
+// imports from other ts files
 const utlis_1 = require("./utlis");
 const seasons_1 = require("./seasons");
 const weathertypes_1 = require("./weathertypes");
-//import { WeatherCommands } from "./chatbot/WeatherCommands";
 const WeatherService_1 = require("./chatbot/WeatherService");
 class TarkovWeatherSystem {
     // Logger instance
@@ -36,7 +37,6 @@ class TarkovWeatherSystem {
         // Resets the weather value back to default
         config_json_1.resetWeather &&
             (0, utlis_1.setWeather)(WeatherValues, 8);
-        //setSeason(SeasonValues);
         if (utlis_1.savedSeason == 2) {
             utlis_1.isWinter = true;
         }
@@ -137,8 +137,8 @@ class TarkovWeatherSystem {
                     },
                 },
             ], "[TWS] /client/weather");
-        // Set weather during client/mail/msg/send callback
-        // if forcing weather with chatbot
+        // Set weather and season during client/mail/msg/send callback
+        // if forcing weather and season with chatbot
         config_json_1.enable &&
             staticRouterModService.registerStaticRouter("[TWS] /client/mail/msg/send", [
                 {
@@ -146,7 +146,7 @@ class TarkovWeatherSystem {
                     action: async (_url, info, sessionId, output) => {
                         if (utlis_1.forceWeatherEnd && config_json_1.enableWeather) {
                             let weather = utlis_1.forceWeatherType;
-                            (0, utlis_1.setWeather)(WeatherValues, weather);
+                            (0, utlis_1.forceWeather)(WeatherValues, weather);
                             config_json_1.consoleMessages &&
                                 console.log(weather);
                         }
@@ -159,7 +159,8 @@ class TarkovWeatherSystem {
                     },
                 },
             ], "[TWS] /client/mail/msg/send");
-        // Set season and weather during client/items callback
+        // Set season and weather during /launcher/server/version callback
+        // for debugging
         config_json_1.enable && config_json_1.debugEnable &&
             staticRouterModService.registerStaticRouter("[TWS] /launcher/server/version", [
                 {
@@ -183,7 +184,6 @@ class TarkovWeatherSystem {
         // We register and re-resolve the dependency so the 
         // container takes care of filling in the command dependencies
         container.register("WeatherService", WeatherService_1.WeatherService);
-        //container.register<WeatherCommands>("WeatherCommands", WeatherCommands);
         container
             .resolve("DialogueController")
             .registerChatBot(container.resolve("WeatherService"));

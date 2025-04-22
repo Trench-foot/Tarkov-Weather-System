@@ -74,6 +74,7 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
 	const forcedSeason = forceSeasonType;
 			
 	switch (enableSeasons) {
+		// Forces a change of season, luckily this works
 		case forceSeasonEnd:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = forcedSeason;
@@ -236,23 +237,6 @@ export const setWeather = (WeatherValues: IWeatherConfig, randomWeather: number)
 	
 	switch (enableWeather) {
 		
-		case 	forceWeatherEnd:
-				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
-				savedWeatherTime = weatherDuration;
-				weatherStartDate = Date.now();	
-				savedWeather = currentWeather;		
-				savedWeatherText =  forceWeatherText;
-				WeatherValues.weather = {
-				...WeatherValues.weather,
-				forceWeatherText,
-				};		
-				consoleMessages && !isWinter &&
-				  console.log("[TWS] Setting" weatherMap[savedWeather]);
-				  
-				consoleMessages && isWinter &&
-				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
-				break;
-		
 		case 	savedWeatherTime == weatherLowerClamp
 				&& currentWeather == 0:
 				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
@@ -370,7 +354,7 @@ export const setWeather = (WeatherValues: IWeatherConfig, randomWeather: number)
 				savedWeatherText =  "...foggyStormDefault";
 				WeatherValues.weather = {
 				...WeatherValues.weather,
-				...blizzardDefault,
+				...foggyStormDefault,
 				};
 				consoleMessages && !isWinter &&
 				  console.log("[TWS] Setting" weatherMap[savedWeather]);
@@ -391,6 +375,233 @@ export const setWeather = (WeatherValues: IWeatherConfig, randomWeather: number)
 				};
 				consoleMessages &&
 				  console.log("[TWS] Setting test weather");
+				break;
+	  
+		default:
+				let tempWeatherTime = Math.round(
+					(weatherDuration * 60000 -
+					(Date.now() - weatherStartDate)) /
+					60000);
+			
+				// Attempt to prevent weather from going crazy negative and breaking weather
+				savedWeatherTime = clamp(tempWeatherTime, weatherLowerClamp, maxWeatherDuration));
+				
+				if(isWinter === false) {
+					savedWeatherName = weatherMap[savedWeather];
+				} else if(isWinter === true) {
+					savedWeatherName = winterWeatherMap[savedWeather];
+				}
+		
+				consoleMessages && !isWinter &&
+					console.log(
+					"[TWS] Current weather is still", 
+					weatherMap[savedWeather] + "."
+					"Time until next weather front:",
+					savedWeatherTime, "Minutes."
+					);
+					
+				consoleMessages && isWinter &&
+					console.log(
+					"[TWS] Current weather is still", 
+					winterWeatherMap[savedWeather] + "."
+					"Time until next weather front:",
+					savedWeatherTime, "Minutes."
+					);
+				break;
+		}
+			// Begin weather save data
+			const newWeatherData = {
+				savedcurrentweather: savedWeather,
+				savedweathername: savedWeatherName
+				savedweathertext: savedWeatherText,
+				weatherstart: weatherStartDate,
+				weatherlength: weatherDuration,
+				weatherleft: savedWeatherTime
+				}
+
+			fs.writeFileSync(weatherPath, JSON.stringify(newWeatherData, null, 4));
+			// End weather save data
+};
+
+// Forces weather because I couldn't hook in to the setWeather very easily
+export const forceWeather = (WeatherValues: IWeatherConfig, forcedWeather: number) => {
+	let currentWeather = forcedWeather;
+	
+	switch (enableWeather) {
+		
+		case 	forceWeatherEnd 
+				&& currentWeather == 0:
+				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
+				savedWeatherTime = weatherDuration;
+				weatherStartDate = Date.now();	
+				savedWeather = currentWeather;		
+				savedWeatherText =  "...stormyDefault";
+				WeatherValues.weather = {
+				...WeatherValues.weather,
+				...stormyDefault,
+				};
+
+				if(isWinter === false) {
+					savedWeatherName = weatherMap[savedWeather];
+				} else if(isWinter === true) {
+					savedWeatherName = winterWeatherMap[savedWeather];
+				}
+				
+				consoleMessages && !isWinter &&
+				  console.log("[TWS] Setting" weatherMap[savedWeather]);
+				  
+				consoleMessages && isWinter &&
+				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
+				break;
+	  
+		case 	forceWeatherEnd 
+				&& currentWeather == 1:
+				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
+				savedWeatherTime = weatherDuration;
+				weatherStartDate = Date.now();	
+				savedWeather = currentWeather;
+				savedWeatherText =  "...foggyDefault";
+				WeatherValues.weather = {
+				...WeatherValues.weather,
+				...foggyDefault,
+				};
+
+				if(isWinter === false) {
+					savedWeatherName = weatherMap[savedWeather];
+				} else if(isWinter === true) {
+					savedWeatherName = winterWeatherMap[savedWeather];
+				}
+				
+				consoleMessages && !isWinter &&
+				  console.log("[TWS] Setting" weatherMap[savedWeather]);
+				  
+				consoleMessages && isWinter &&
+				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
+				break;
+	  
+		case	forceWeatherEnd 
+				&& currentWeather == 2:
+				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
+				savedWeatherTime = weatherDuration;
+				weatherStartDate = Date.now();	
+				savedWeather = currentWeather;
+				savedWeatherText =  "...windyDefault";
+				WeatherValues.weather = {
+				...WeatherValues.weather,
+				...windyDefault,
+				};
+				
+				if(isWinter === false) {
+					savedWeatherName = weatherMap[savedWeather];
+				} else if(isWinter === true) {
+					savedWeatherName = winterWeatherMap[savedWeather];
+				}
+				
+				consoleMessages && !isWinter &&
+				  console.log("[TWS] Setting" weatherMap[savedWeather]);
+				  
+				consoleMessages && isWinter &&
+				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
+				break;
+	  
+		case 	forceWeatherEnd 
+				&& currentWeather == 3:
+				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
+				savedWeatherTime = weatherDuration;
+				weatherStartDate = Date.now();
+				savedWeather = currentWeather;
+				savedWeatherText =  "...mistyDefault";
+				WeatherValues.weather = {
+				...WeatherValues.weather,
+				...mistyDefault,
+				};
+				
+				if(isWinter === false) {
+					savedWeatherName = weatherMap[savedWeather];
+				} else if(isWinter === true) {
+					savedWeatherName = winterWeatherMap[savedWeather];
+				}
+				
+				consoleMessages && !isWinter &&
+				  console.log("[TWS] Setting" weatherMap[savedWeather]);
+				  
+				consoleMessages && isWinter &&
+				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
+				break;
+	  
+		case 	forceWeatherEnd 
+				&& currentWeather == 4:
+				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
+				savedWeatherTime = weatherDuration;
+				weatherStartDate = Date.now();
+				savedWeather = currentWeather;
+				savedWeatherText =  "...foggySunnyDefault";
+				WeatherValues.weather = {
+				...WeatherValues.weather,
+				...foggySunnyDefault,
+				};
+				
+				if(isWinter === false) {
+					savedWeatherName = weatherMap[savedWeather];
+				} else if(isWinter === true) {
+					savedWeatherName = winterWeatherMap[savedWeather];
+				}
+				
+				consoleMessages && !isWinter &&
+				  console.log("[TWS] Setting" weatherMap[savedWeather]);
+				  
+				consoleMessages && isWinter &&
+				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
+				break;
+		
+		case 	forceWeatherEnd 
+				&& currentWeather == 5:
+				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
+				savedWeatherTime = weatherDuration;
+				weatherStartDate = Date.now();
+				savedWeather = currentWeather;
+				savedWeatherText =  "...sunnyDefault";
+				WeatherValues.weather = {
+				...WeatherValues.weather,
+				...sunnyDefault,
+				};
+				
+				if(isWinter === false) {
+					savedWeatherName = weatherMap[savedWeather];
+				} else if(isWinter === true) {
+					savedWeatherName = winterWeatherMap[savedWeather];
+				}
+				
+				consoleMessages && !isWinter &&
+				  console.log("[TWS] Setting" weatherMap[savedWeather]);
+				  
+				consoleMessages && isWinter &&
+				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
+				break;
+		
+		case 	forceWeatherEnd 
+				&& currentWeather == 6:
+				weatherDuration = getRandomWeatherDuration(minWeatherDuration, maxWeatherDuration);
+				savedWeatherTime = weatherDuration;
+				weatherStartDate = Date.now();
+				savedWeather = currentWeather;
+				savedWeatherText =  "...foggyStormDefault";
+				WeatherValues.weather = {
+				...WeatherValues.weather,
+				...foggyStormDefault,
+				};
+				
+				if(isWinter === false) {
+					savedWeatherName = weatherMap[savedWeather];
+				} else if(isWinter === true) {
+					savedWeatherName = winterWeatherMap[savedWeather];
+				}
+				
+				consoleMessages && !isWinter &&
+				  console.log("[TWS] Setting" weatherMap[savedWeather]);
+				  
+				consoleMessages && isWinter &&
+				  console.log("[TWS] Setting" winterWeatherMap[savedWeather]);
 				break;
 	  
 		default:

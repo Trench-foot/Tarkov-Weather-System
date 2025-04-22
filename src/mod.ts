@@ -13,6 +13,7 @@ import { IWeatherConfig } from "@spt/models/spt/config/IWeatherConfig";
 import { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
 import * as fs from "fs";
 
+// various config files
 import {
 	enable,
 	foreverSummer,
@@ -30,6 +31,7 @@ import { W_HSnow, W_Foggy, W_Windy, W_Flurry, W_SunFog, W_Sunny, W_Blizzard } fr
 import { Al_Stormy, Al_Foggy, Al_Windy, Al_Misty, Al_SunFog, Al_Sunny, Al_FStorm } from "../weather/autumn_late.json";
 import { Se_Stormy, Se_Foggy, Se_Windy, Se_Misty, Se_SunFog, Se_Sunny, Se_FStorm } from "../weather/spring_early.json";
 
+// imports from other ts files
 import { 
 	WeatherValues;
 	SeasonValues,
@@ -37,7 +39,8 @@ import {
 	savedSeason,
 	savedDate,
 	setSeason, 
-	setWeather, 
+	setWeather,
+	forceWeather,
 	weather,
 	weatherDuration,
 	savedWeatherTime,
@@ -48,7 +51,6 @@ import {
 } from "./utlis";
 import { seasonMap, seasonDates } from "./seasons";
 import { weatherMap, winterWeatherMap } from "./weathertypes";
-//import { WeatherCommands } from "./chatbot/WeatherCommands";
 import { WeatherService } from "./chatbot/WeatherService";
 
 
@@ -88,9 +90,6 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	// Resets the weather value back to default
 	resetWeather &&
       setWeather(WeatherValues, 8);
-	  
-	  
-	//setSeason(SeasonValues);
 	
 	if(savedSeason == 2) {
 		isWinter = true;
@@ -255,8 +254,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
         "[TWS] /client/weather",
       );
 	  
-	// Set weather during client/mail/msg/send callback
-	// if forcing weather with chatbot
+	// Set weather and season during client/mail/msg/send callback
+	// if forcing weather and season with chatbot
 	enable &&
       staticRouterModService.registerStaticRouter(
         "[TWS] /client/mail/msg/send",
@@ -268,7 +267,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 			if (forceWeatherEnd && enableWeather) {
 				let weather = forceWeatherType;
 			
-				setWeather(WeatherValues, weather);
+				forceWeather(WeatherValues, weather);
 			
 				consoleMessages &&
 				  console.log(weather);
@@ -289,7 +288,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
         "[TWS] /client/mail/msg/send",
       );
 
-	// Set season and weather during client/items callback
+	// Set season and weather during /launcher/server/version callback
+	// for debugging
 	enable && debugEnable &&
       staticRouterModService.registerStaticRouter(
         "[TWS] /launcher/server/version",
@@ -324,7 +324,6 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 		// We register and re-resolve the dependency so the 
 		// container takes care of filling in the command dependencies
 		container.register<WeatherService>("WeatherService", WeatherService);
-		//container.register<WeatherCommands>("WeatherCommands", WeatherCommands);
 		
 		container
 		  .resolve<DialogueController>("DialogueController")
@@ -400,9 +399,5 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
         throw new Error("Failed to select a weather based on weightings.")
     }
 }
-
-
-
-
 
 module.exports = { mod: new TarkovWeatherSystem() };

@@ -1,8 +1,8 @@
 {
-    "iswinter": false,
-    "season": 3,
-    "seasontext": "SPRING",
-    "seasonstart": 1745272097294,
-    "seasonlength": 1680,
-    "seasonleft": 1679
+    "iswinter": true,
+    "season": 2,
+    "seasontext": "WINTER",
+    "seasonstart": 1745288375908,
+    "seasonlength": 2520,
+    "seasonleft": 2502
 }

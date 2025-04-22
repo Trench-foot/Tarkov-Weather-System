@@ -1,9 +1,9 @@
 {
-  "A_Stormy": 30,
+  "A_Stormy": 15,
   "A_Foggy": 20,
-  "A_Windy": 5,
-  "A_Misty": 15,
+  "A_Windy": 25,
+  "A_Misty": 20,
   "A_SunFog": 10,
-  "A_Sunny": 10,
+  "A_Sunny": 15,
   "A_FStorm": 10
 }
