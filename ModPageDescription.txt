@@ -1,0 +1,79 @@
+​Tired of having to wait for days and weeks to pass for the changing of the seasons?  Tired of a lack of variety in the weather of Tarkov?  Well look no further!  With Tarkov Weather System you will get both a configurable passage of seasons, experience them as quickly or slowly as you desire.  You will also get custom weather with different probabilities for each season, also highly configurable.
+
+
+
+Each season has a time limit measured in real world minutes, and the mod remembers what was the last season and how long it has been sense it started.  The same can be said about the weather of the mod.  Both of these values can be configured, your seasons and chosen weather can last as long as you want.
+
+
+
+Tarkov Weather System includes a custom chatbot, the Tarkov Weather Service, that can be interacted with to get the current weather and season.  Also this chatbot allows you to force whatever season and weather you want while in game.  This integrates seamlessly with the rest of the mod and allows you to skip weather or seasons in game whenever you want.
+
+
+
+The default configuration of the mod reflects a 7 day year for the passage of the seasons.  Weather by default lasts between 30 to 180 minutes.  The reasoning for the weather time frame is that a full 24 hours of ingame time of Tarkov lasts just under 3 real world hours.  The weather is chosen at random, so it is entirely possible to have multiple repeats currently of the weather.
+
+
+
+The weather uses a weighted choice, so you can place your desired weather at a higher chance.
+
+
+
+config example.  You can disable the mod at anytime, or just use part of it, want the seasons, but not the weather changes, can do, vise verses?  Sure why not!  Want summer to never end?  Can do!
+
+​{
+  "enable": true,
+  "enableSeasons": true,
+  "enableWeather": true,
+  "foreverSummer": false,
+  "endlessWinter": false,  
+  
+  "seasonLength": {
+    "SUMMER": 2520,
+    "AUTUMN": 1680,
+    "WINTER": 2520,
+    "SPRING": 1680,
+    "AUTUMN_LATE": 840,
+    "SPRING_EARLY": 840
+  },
+  
+  "minWeatherDuration": 30,
+  "maxWeatherDuration": 180,
+  
+  "resetWeather": false,
+  "debugEnable": true,
+  "consoleMessages": true
+}
+
+
+Weather config example.  This is the weather config for autumn, but all of them look the same.  A higher weight equals a larger chance to be chosen.
+
+
+
+​{
+  "A_Stormy": 15,
+  "A_Foggy": 20,
+  "A_Windy": 25,
+  "A_Misty": 20,
+  "A_SunFog": 10,
+  "A_Sunny": 15,
+  "A_FStorm": 10
+}
+
+
+This is not quiet a 1.0 release as I still want to make a few additions and I'm sure I can still slim down the code.
+
+
+
+Possible problems:
+
+The chatbot has not been fully configured to work if either seasons or the weather parts of the mod are disabled, it may produce errors if you attempt to get the weather forecast if you have either disabled in the config.  But if you chose to force either season or weather, there should be a check for that.
+
+
+Future plans:
+
+I plan to find out if there is a difference between winter_late and winter_early in the game.  As the season mod I originally started to modify for this project did not note a difference.  And every other season mod I looked at did not either.
+The mod currently does not use the 'storm' season.  The reason for that is once again the seasons mod I started from stated the season was broken, for whatever reason.  I need to look into it as I would like to use it to separate summer into a earlier mostly dry season, and a late summer/stormy wet late season before autumn.
+I want to add some character to the chatbot, right now its function over form, I would like to change that in the future.
+While the chatbot can tell you the current weather and season, it currently doesn't tell you how long they will last.  I want to change that so the player has an idea of it.
+I'm open to suggestions for different weather types people would like to see in the mod.  Suggest away.
+Currently the mod is only tested and built using 3.10.5, I do plan to update it for 3.11, but I do not have that version installed.  I'm currently waiting on a few more mods to update before I make the move.  But I will get 3.11 installed soonish to work on it.
