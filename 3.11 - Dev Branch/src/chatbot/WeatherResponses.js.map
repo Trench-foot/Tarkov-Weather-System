@@ -1,0 +1,10 @@
+{
+    "version": 3,
+    "file": "WeatherResponses.js",
+    "sourceRoot": "",
+    "sources": [
+        "WeatherResponses.ts"
+    ],
+    "names": [],
+    "mappings": ";;;AAAA,oEAAoE;AACpE,gFAAgF;AAChF,oCAWoB;AACpB,kDAA+D;AAElD,QAAA,QAAQ,GAAG,+EAA+E;IACjG,qCAAqC;IACrC,iDAAiD;IACjD,YAAY;IACZ,0BAA0B;IAC1B,gBAAgB;IAChB,eAAe;IACf,eAAe;IACf,eAAe;IACf,qBAAqB;IACrB,eAAe;IACf,sBAAsB;IACtB,kBAAkB;IAClB,yBAAyB;IACzB,gBAAgB;IAChB,gBAAgB;IAChB,gBAAgB;IAChB,gBAAgB;IAChB,qBAAqB;IACrB,sBAAsB,CAAC;AAEhB,QAAA,cAAc,GAAG,mEAAmE;IACxF,sBAAsB,kBAAU,IAAI;IACpC,uBAAuB,+BAAgB,CAAC,oBAAY,CAAC,EAAE,CAAC;AAEpD,QAAA,iBAAiB,GAAG,mEAAmE;IAC3F,sBAAsB,kBAAU,IAAI;IACpC,yBAAyB,yBAAU,CAAC,oBAAY,CAAC,EAAE,CAAC"
+}
