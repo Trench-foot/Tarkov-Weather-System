@@ -23,100 +23,100 @@ export const winterWeatherMap = {
 };
 
 export const defaultWeather = {
-seasonValues: {
-default: {
-  clouds: {
-    values: [-1, -0.8, -0.5, 0.1, 0, 0.15, 0.4, 1],
-    weights: [80, 22, 22, 15, 15, 15, 5, 4],
-  },
-  windSpeed: {
-    values: [0, 1, 2, 3, 4],
-    weights: [6, 3, 2, 1, 1],
-  },
-  windDirection: {
-    values: [1, 2, 3, 4, 5, 6, 7, 8],
-    weights: [1, 1, 1, 1, 1, 1, 1, 1],
-  },
-  windGustiness: {
-    min: 0,
-    max: 1,
-  },
-  rain: {
-    values: [1, 2, 3, 4, 5],
-    weights: [20, 1, 1, 1, 1],
-  },
-  rainIntensity: {
-    min: 0,
-    max: 1,
-  },
-  fog: {
-    values: [0.0013, 0.0018, 0.002, 0.004, 0.006],
-    weights: [35, 6, 4, 3, 1],
-  },
-  temp: {
-        day: {
-            min: 9,
-            max: 32
-            },
-        night: {
-            min: 2,
-            max: 16
+	seasonValues: {
+		default: {
+			clouds: {
+				values: [-1, -0.8, -0.5, 0.1, 0, 0.15, 0.4, 1],
+				weights: [80, 22, 22, 15, 15, 15, 5, 4],
+			},
+			windSpeed: {
+				values: [0, 1, 2, 3, 4],
+				weights: [6, 3, 2, 1, 1],
+			},
+			windDirection: {
+				values: [1, 2, 3, 4, 5, 6, 7, 8],
+				weights: [1, 1, 1, 1, 1, 1, 1, 1],
+			},
+			windGustiness: {
+				min: 0,
+				max: 1,
+			},
+			rain: {
+				values: [1, 2, 3, 4, 5],
+				weights: [20, 1, 1, 1, 1],
+			},
+			rainIntensity: {
+				min: 0,
+				max: 1,
+				},
+			fog: {
+				values: [0.0013, 0.0018, 0.002, 0.004, 0.006],
+				weights: [35, 6, 4, 3, 1],
+			},
+			temp: {
+				day: {
+					min: 9,
+					max: 32
+				},
+			night: {
+					min: 2,
+					max: 16
+				}
+			},
+			pressure: {
+				min: 760,
+				max: 780,
+			}
+		},
+		WINTER: {
+			clouds: {
+				values: [-1, 0.65, 1],
+				weights: [2, 1, 1],
+			},
+			windSpeed: {
+				values: [0, 1, 2, 3, 4],
+				weights: [6, 3, 2, 1, 1],
+			},
+			windDirection: {
+				values: [1, 2, 3, 4, 5, 6, 7, 8],
+				weights: [1, 1, 1, 1, 1, 1, 1, 1],
+			},
+			windGustiness: {
+				min: 0,
+				max: 1,
+			},
+			rain: {
+				values: [1, 2, 3, 4, 5],
+				weights: [0, 1, 1, 1, 1],
+			},
+			rainIntensity: {
+				min: 0,
+				max: 1,
+			},
+			fog: {
+				values: [0.0013, 0.0018, 0.002, 0.004, 0.012],
+				weights: [5, 4, 1, 3, 2],
+			},
+			temp: {
+				day: {
+					min: -5,
+					max: 3
+				},
+				night: {
+					min: -22,
+					max: -5
+				}
+			},
+			pressure: {
+				min: 760,
+				max: 780,
+			},
 		}
-  },
-  pressure: {
-    min: 760,
-    max: 780,
-  }
-},
-WINTER: {
-  clouds: {
-    values: [-1, 0.65, 1],
-    weights: [2, 1, 1],
-  },
-  windSpeed: {
-    values: [0, 1, 2, 3, 4],
-    weights: [6, 3, 2, 1, 1],
-  },
-  windDirection: {
-    values: [1, 2, 3, 4, 5, 6, 7, 8],
-    weights: [1, 1, 1, 1, 1, 1, 1, 1],
-  },
-  windGustiness: {
-    min: 0,
-    max: 1,
-  },
-  rain: {
-    values: [1, 2, 3, 4, 5],
-    weights: [0, 1, 1, 1, 1],
-  },
-  rainIntensity: {
-    min: 0,
-    max: 1,
-  },
-  fog: {
-    values: [0.0013, 0.0018, 0.002, 0.004, 0.012],
-    weights: [5, 4, 1, 3, 2],
-  },
-  temp: {
-        day: {
-            min: -5,
-            max: 3
-            },
-        night: {
-            min: -22,
-            max: -5
-		}
-  },
-  pressure: {
-    min: 760,
-    max: 780,
-  },
-}
-},	
-  timePeriod: {
-    values: [15, 30],
-    weights: [1, 2],
-  },
+	},	
+	timePeriod: {
+		values: [15, 30],
+		weights: [1, 2],
+	},
 } as unknown as Partial<IWeatherValues>;
 
 export const mistyDefault = {
