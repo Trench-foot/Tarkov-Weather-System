@@ -3,7 +3,9 @@
   "enableSeasons": true,
   "enableWeather": true,
   "foreverSummer": false,
-  "endlessWinter": false,  
+  "endlessWinter": false,
+  
+  "enableChatbot": true,
   
   "seasonLength": {
     "SUMMER": 2520,
@@ -18,6 +20,6 @@
   "maxWeatherDuration": 180,
   
   "resetWeather": false,
-  "debugEnable": false,
-  "consoleMessages": false
+  "debugEnable": true,
+  "consoleMessages": true
 }

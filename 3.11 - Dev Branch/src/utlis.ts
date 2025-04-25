@@ -10,6 +10,7 @@ import {
 	consoleMessages,
 	minWeatherDuration,
 	maxWeatherDuration,
+	enableChatbot,
 } from "../config/config.json";
 import { IWeatherConfig } from "@spt/models/spt/config/IWeatherConfig";
 import { 
@@ -34,6 +35,12 @@ export const seasonPath = path.resolve(path.dirname(__filename), "./db/season.js
 
 // For whatever reason this not being here breaks the mod, just go with it
 export const weather;
+
+// To send some config settings to the chatbot, I couldn't figure out how to have
+// the chatbot pull from the config itself
+export const seasonsEnabled = enableSeasons;
+export const weatherEnabled = enableWeather;
+export const chatbotEnabled = enableChatbot;
 
 // Reading the weather database file
 const dbWeather = readJsonFile(weatherPath);

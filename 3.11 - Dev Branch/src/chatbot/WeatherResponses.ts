@@ -14,7 +14,7 @@ import {
   } from "../utlis";
 import { weatherMap, winterWeatherMap } from "../weathertypes";
 
-export const testText = `This is Bolt Lightning with a test!  Your number one weather man in Tarkov.\n` +
+export const testText = `This is Bolt Lightning with a list of commands!  Your number one weather man in Tarkov.\n` +
 						`Use one of the following commands\n` +
 						`To check the current weather and season type:\n` +
 						`forecast\n` +
@@ -26,7 +26,6 @@ export const testText = `This is Bolt Lightning with a test!  Your number one we
 						`Force Foggy Sunny\n` +
 						`Force Sunny\n` +
 						`Force Foggy Stormy\n` +
-						`Force Blizzard\n` +
 						`To change season use:\n` +
 						`Force Summer\n` +
 						`Force Autumn\n` +
