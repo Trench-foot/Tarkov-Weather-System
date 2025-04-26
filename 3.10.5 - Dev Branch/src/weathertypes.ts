@@ -232,7 +232,7 @@ export const windyDefault = {
     max: 0.2,
   },
   fog: {
-    values: [0.0001, 0.0009, 0.008, 0.01, 0.03],
+    values: [0.0015, 0.002, 0.008, 0.01, 0.03],
     weights: [2, 1, 0, 0, 0],
   },
   pressure: {
@@ -304,7 +304,7 @@ export const sunnyDefault = {
     max: 1,
   },
   fog: {
-    values: [0.0001, 0.0009, 0.008, 0.01, 0.03],
+    values: [0.0015, 0.002, 0.008, 0.01, 0.03],
     weights: [2, 1, 0, 0, 0],
   },
   pressure: {
