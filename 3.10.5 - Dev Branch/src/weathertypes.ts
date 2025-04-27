@@ -189,10 +189,10 @@ export const foggySunnyDefault = {
   },
   rain: {
     values: [1, 2, 3, 4, 5],
-    weights: [3, 2, 1, 0, 0],
+    weights: [3, 0, 0, 0, 0],
   },
   rainIntensity: {
-    min: 0.3,
+    min: 0,
     max: 1,
   },
   fog: {
