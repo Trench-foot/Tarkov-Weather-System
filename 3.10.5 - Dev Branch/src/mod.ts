@@ -470,6 +470,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 					 return 2;
 				case spring > 0:
 				     return 5;
+				case summer > 0:
+					 return 3;
 				default:
 					 // If no valid seasons forces the mod to maintain the current season and
 					 // sends a nonfatal error to the player to fix it
@@ -489,6 +491,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 					 return 5;
 				case summer > 0:
 					 return 3;
+				case autumn > 0:
+					 return 0;
 				default:
 					 // If no valid seasons forces the mod to maintain the current season and
 					 // sends a nonfatal error to the player to fix it
@@ -508,6 +512,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 					 return 0;
 				case autumnL > 0:
 					 return 1;
+				case winter > 0:
+					 return 4;
 				default:
 					 // If no valid seasons forces the mod to maintain the current season and
 					 // sends a nonfatal error to the player to fix it
@@ -527,6 +533,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 					 return 4;
 				case springE > 0:
 					 return 2;
+				case spring > 0:
+					 return 5;
 				default:
 					 // If no valid seasons forces the mod to maintain the current season and
 					 // sends a nonfatal error to the player to fix it
@@ -546,6 +554,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 					 return 3;
 				case autumn > 0:
 					 return 0;
+				case autumnL > 0:
+					 return 1;
 				default:
 					 // If no valid seasons forces the mod to maintain the current season and
 					 // sends a nonfatal error to the player to fix it
@@ -565,6 +575,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 					 return 1;
 				case winter > 0:
 					 return 4;
+				case springE > 0:
+					 return 2;
 				default:
 					 // If no valid seasons forces the mod to maintain the current season and
 					 // sends a nonfatal error to the player to fix it
