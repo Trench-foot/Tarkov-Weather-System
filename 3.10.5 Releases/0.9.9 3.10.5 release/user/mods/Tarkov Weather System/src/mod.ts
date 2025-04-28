@@ -9,7 +9,6 @@ import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { LogBackgroundColor } from "@spt/models/spt/logging/LogBackgroundColor";
 import { ConfigServer } from "@spt/servers/ConfigServer";
 import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
-import { ICoreConfig } from "@spt/models/spt/config/ICoreConfig";
 import { IWeatherConfig } from "@spt/models/spt/config/IWeatherConfig";
 import { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
 import * as fs from "fs";
@@ -21,7 +20,7 @@ import {
 	endlessWinter,
 	enableSeasons,
 	enableWeather,
-	seasonLength,	  
+	seasonLength,
 	consoleMessages,
 	debugEnable,
 	resetWeather,
@@ -102,7 +101,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	// Resets the weather value back to default
 	resetWeather &&
       setWeather(WeatherValues, 8);
-	  
+	
 	// Force previously saved weather at server start
 	if(!forceWeatherEnd){
 		serverStarted = true;
@@ -162,7 +161,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  
 			  let weather = this.getRandomWeather(container, SeasonValues);
-			  let testedSeason = this.getSeasonTest(SeasonValues);									 
+			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
 			  if(enableWeather) {
 				setWeather(WeatherValues, weather);
@@ -192,7 +191,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  
 			  let weather = this.getRandomWeather(container, SeasonValues);
-			  let testedSeason = this.getSeasonTest(SeasonValues);										 
+			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
 			  if(enableWeather) {
 				setWeather(WeatherValues, weather);
@@ -221,7 +220,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  
 			  let weather = this.getRandomWeather(container, SeasonValues);
-			  let testedSeason = this.getSeasonTest(SeasonValues);							 
+			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
 			  if(enableWeather) {
 				setWeather(WeatherValues, weather);
@@ -250,7 +249,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             url: "/client/match/local/end",
             action: async (_url, info, sessionId, output) => {
 			  let testedSeason = this.getSeasonTest(SeasonValues);
-			  setSeason(SeasonValues, testedSeason);			  
+			  
+			  setSeason(SeasonValues,testedSeason);			  
 			  
               return output;
             },
@@ -303,6 +303,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 				
 			if (forceSeasonEnd && enableSeasons) {
 				let testedSeason = this.getSeasonTest(SeasonValues);
+				
 				setSeason(SeasonValues, testedSeason);
 				}
 				
@@ -328,7 +329,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  
 			  let weather = this.getRandomWeather(container, SeasonValues);
-			  let testedSeason = this.getSeasonTest(SeasonValues);										 
+			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
 			  if(enableWeather) {
 				setWeather(WeatherValues, weather);
@@ -354,16 +355,10 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 		// We register and re-resolve the dependency so the 
 		// container takes care of filling in the command dependencies
 		container.register<WeatherService>("WeatherService", WeatherService);
-			const myWeatherServiceBot = container.resolve<WeatherService>("WeatherService");
-		container.resolve<DialogueController>("DialogueController").registerChatBot(myWeatherServiceBot);
 		
-		const coreConfig = container.resolve<ConfigServer>
-			("ConfigServer").getConfig<ICoreConfig>(ConfigTypes.CORE);
-				const myWeatherServiceInfo = myWeatherServiceBot.getChatBot();
-				coreConfig.features.chatbotFeatures.ids[myWeatherServiceInfo.Info.Nickname] =
-				myWeatherServiceInfo._id;
-				coreConfig.features.chatbotFeatures.enabledBots[myWeatherServiceInfo._id] = true;
-
+		container
+		  .resolve<DialogueController>("DialogueController")
+		  .registerChatBot(container.resolve<WeatherService>("WeatherService"));
 	}
 
 	// 95% of this function comes from random season ripoff, I hope bushtail doesn't mind
@@ -440,7 +435,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             }
         }
         throw new Error("Failed to select a weather based on weightings.")
-	}
+    }
 	
 	// Test seasonLength values to see if the config wants us to skip any seasons
 	private function getSeasonTest(SeasonValues: IWeatherConfig): number {
@@ -589,6 +584,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 					 return 2;
 			}
 		}
+	}
 }
 
 module.exports = { mod: new TarkovWeatherSystem() };

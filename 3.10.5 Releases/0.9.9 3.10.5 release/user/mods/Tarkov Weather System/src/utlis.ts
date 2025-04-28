@@ -35,7 +35,7 @@ export const seasonPath = path.resolve(path.dirname(__filename), "./db/season.js
 
 // For whatever reason this not being here breaks the mod, just go with it
 export const weather;
-export const testedSeason;			  
+export const testedSeason;
 
 // To send some config settings to the chatbot, I couldn't figure out how to have
 // the chatbot pull from the config itself
@@ -116,12 +116,19 @@ if(maxWeatherDuration <= minWeatherDuration){
 	minForcedWeather = minWeatherDuration / 2;
 	maxForcedWeather = maxWeatherDuration / 2;
 };
+
+
 // Set season
 export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) => {
 
 	let currentSeason = seasonMap[SeasonValues.overrideSeason];
 	let forcedSeason = forceSeasonType;
 	let testSeason = testedSeason;
+	//if(!endlessWinter && !foreverSummer && !forceSeasonEnd){
+		//let testSeason = seasonTest(currentSeason, SeasonValues);
+	//}
+	
+	
 	switch (enableSeasons) {
 		// Forces a change of season, luckily this works
 		case forceSeasonEnd:
@@ -182,11 +189,11 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
                 break;
 
 		case savedTime == weatherLowerClamp
-			 && 2 === testSeason:
+             && 2 === testSeason:
              SeasonValues["last"] = Date.now();
 		     SeasonValues.overrideSeason = 5;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
-			 savedTime = seasonLength[currentSeason];				
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
                   
@@ -198,7 +205,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
                 break;
 				  
 		case savedTime == weatherLowerClamp
-			 && 5 === testSeason:
+             && 5 === testSeason:
              SeasonValues["last"] = Date.now();
 		     SeasonValues.overrideSeason = 3;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
@@ -214,7 +221,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
                 break;
 				  
 		case savedTime == weatherLowerClamp
-			 && 3 === testSeason:
+             && 3 === testSeason:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 0;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
@@ -230,11 +237,11 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
                 break;
 				  
 		case savedTime == weatherLowerClamp
-			 && 0 === testSeason:
+             && testSeason === 0:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 1;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
-			 savedTime = seasonLength[currentSeason];						
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
                   
@@ -246,11 +253,11 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
                 break;
 				  
 		case savedTime == weatherLowerClamp
-			 && 1 === testSeason:
+             && testSeason === 1:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 4;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
-			 savedTime = seasonLength[currentSeason];					
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
                  
@@ -269,6 +276,8 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
 			
 				// Attempt to prevent weather from going crazy negative and breaking weather
 				savedTime = clamp(tempSeasonTime, weatherLowerClamp, seasonLength[currentSeason]));
+				 
+				 
              consoleMessages &&
 				console.log(
                 "[TWS] The season is still",
@@ -507,9 +516,7 @@ export const forceWeather = (WeatherValues: IWeatherConfig, forcedWeather: numbe
 				...WeatherValues.weather,
 				...stormyDefault,
 				};
-				
-				
-				
+
 				if(isWinter === false) {
 					savedWeatherName = weatherMap[savedWeather];
 				} else if(isWinter === true) {
