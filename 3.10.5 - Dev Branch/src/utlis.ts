@@ -35,6 +35,7 @@ export const seasonPath = path.resolve(path.dirname(__filename), "./db/season.js
 
 // For whatever reason this not being here breaks the mod, just go with it
 export const weather;
+export const testedSeason;
 
 // To send some config settings to the chatbot, I couldn't figure out how to have
 // the chatbot pull from the config itself
@@ -116,13 +117,17 @@ if(maxWeatherDuration <= minWeatherDuration){
 	maxForcedWeather = maxWeatherDuration / 2;
 };
 
- 
 
 // Set season
-export const setSeason = (SeasonValues: IWeatherConfig) => {
+export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) => {
 
-	const currentSeason = seasonMap[SeasonValues.overrideSeason];
-	const forcedSeason = forceSeasonType;
+	let currentSeason = seasonMap[SeasonValues.overrideSeason];
+	let forcedSeason = forceSeasonType;
+	let testSeason = testedSeason;
+	//if(!endlessWinter && !foreverSummer && !forceSeasonEnd){
+		//let testSeason = seasonTest(currentSeason, SeasonValues);
+	//}
+	
 	
 	switch (enableSeasons) {
 		// Forces a change of season, luckily this works
@@ -130,10 +135,11 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = forcedSeason;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 savedTime = seasonLength[currentSeason];
                   
              consoleMessages &&
 				console.log(
-                "[TWS] The season has changed! It is now:",
+                "[TWS] The season was forced to changed! It is now:",
                 seasonMap[SeasonValues.overrideSeason]
                 );
                 break;
@@ -166,12 +172,12 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
                 );
                 break;
 	
-		case Date.now() - SeasonValues["last"] >=
-             seasonLength[currentSeason] * 60000
-			 && SeasonValues.overrideSeason === 4:
+		case savedTime == weatherLowerClamp
+			 && 4 === testSeason:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 2;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = true;
 
                   
@@ -182,12 +188,12 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
                 );
                 break;
 
-		case Date.now() - SeasonValues["last"] >=
-             seasonLength[currentSeason] * 60000
-             && SeasonValues.overrideSeason === 2:
+		case savedTime == weatherLowerClamp
+             && 2 === testSeason:
              SeasonValues["last"] = Date.now();
 		     SeasonValues.overrideSeason = 5;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
                   
@@ -198,12 +204,12 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
                 );
                 break;
 				  
-		case Date.now() - SeasonValues["last"] >=
-             seasonLength[currentSeason] * 60000
-             && SeasonValues.overrideSeason === 5:
+		case savedTime == weatherLowerClamp
+             && 5 === testSeason:
              SeasonValues["last"] = Date.now();
 		     SeasonValues.overrideSeason = 3;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
                   
@@ -214,12 +220,12 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
                 );
                 break;
 				  
-		case Date.now() - SeasonValues["last"] >=
-             seasonLength[currentSeason] * 60000
-             && SeasonValues.overrideSeason === 3:
+		case savedTime == weatherLowerClamp
+             && 3 === testSeason:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 0;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
                   
@@ -230,12 +236,12 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
                 );
                 break;
 				  
-		case Date.now() - SeasonValues["last"] >=
-             seasonLength[currentSeason] * 60000
-             && SeasonValues.overrideSeason === 0:
+		case savedTime == weatherLowerClamp
+             && testSeason === 0:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 1;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
                   
@@ -246,12 +252,12 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
                 );
                 break;
 				  
-		case Date.now() - SeasonValues["last"] >=
-             seasonLength[currentSeason] * 60000
-             && SeasonValues.overrideSeason === 1:
+		case savedTime == weatherLowerClamp
+             && testSeason === 1:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 4;
 			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
                  
@@ -263,17 +269,21 @@ export const setSeason = (SeasonValues: IWeatherConfig) => {
                 break;
 				  
         default:
-                 
+                 let tempSeasonTime = Math.round(
+					(seasonLength[currentSeason] * 60000 -
+					(Date.now() - SeasonValues["last"])) /
+					60000);
+			
+				// Attempt to prevent weather from going crazy negative and breaking weather
+				savedTime = clamp(tempSeasonTime, weatherLowerClamp, seasonLength[currentSeason]));
+				 
+				 
              consoleMessages &&
 				console.log(
                 "[TWS] The season is still",
                 seasonMap[SeasonValues.overrideSeason] + ".",
                 "Time until next season:",
-                savedTime = Math.round(
-                (seasonLength[currentSeason] * 60000 -
-                (Date.now() - SeasonValues["last"])) /
-                60000),
-                "Minutes."
+                savedTime, "Minutes."
                 );
                 break;
         }

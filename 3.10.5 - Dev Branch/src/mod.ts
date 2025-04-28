@@ -20,6 +20,7 @@ import {
 	endlessWinter,
 	enableSeasons,
 	enableWeather,
+	seasonLength,
 	consoleMessages,
 	debugEnable,
 	resetWeather,
@@ -43,6 +44,7 @@ import {
 	setWeather,
 	forceWeather,
 	weather,
+	testedSeason,
 	weatherDuration,
 	savedWeatherTime,
 	savedWeather,
@@ -159,6 +161,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  
 			  let weather = this.getRandomWeather(container, SeasonValues);
+			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
 			  if(enableWeather) {
 				setWeather(WeatherValues, weather);
@@ -168,7 +171,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 			    console.log(weather);
 			
 			  if(enableSeasons) {
-				setSeason(SeasonValues);
+				setSeason(SeasonValues, testedSeason);
 				}
 			  
               return output;
@@ -188,6 +191,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  
 			  let weather = this.getRandomWeather(container, SeasonValues);
+			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
 			  if(enableWeather) {
 				setWeather(WeatherValues, weather);
@@ -197,7 +201,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 			    console.log(weather);
 			
 			  if(enableSeasons) {
-				setSeason(SeasonValues);
+				setSeason(SeasonValues, testedSeason);
 				}
 			  
               return output;
@@ -216,6 +220,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  
 			  let weather = this.getRandomWeather(container, SeasonValues);
+			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
 			  if(enableWeather) {
 				setWeather(WeatherValues, weather);
@@ -225,7 +230,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 			    console.log(weather);
 			
 			  if(enableSeasons) {
-				setSeason(SeasonValues);
+				setSeason(SeasonValues, testedSeason);
 				}
 			  
               return output;
@@ -243,8 +248,9 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
           {
             url: "/client/match/local/end",
             action: async (_url, info, sessionId, output) => {
-
-			  setSeason(SeasonValues);			  
+			  let testedSeason = this.getSeasonTest(SeasonValues);
+			  
+			  setSeason(SeasonValues,testedSeason);			  
 			  
               return output;
             },
@@ -296,7 +302,9 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 				}
 				
 			if (forceSeasonEnd && enableSeasons) {
-				setSeason(SeasonValues);
+				let testedSeason = this.getSeasonTest(SeasonValues);
+				
+				setSeason(SeasonValues, testedSeason);
 				}
 				
 			forceSeasonEnd = false;
@@ -321,6 +329,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  
 			  let weather = this.getRandomWeather(container, SeasonValues);
+			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
 			  if(enableWeather) {
 				setWeather(WeatherValues, weather);
@@ -330,7 +339,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 			    console.log(weather);
 			
 			  if(enableSeasons) {
-				setSeason(SeasonValues);
+				setSeason(SeasonValues, testedSeason);
 				}
 			  
               return output;
@@ -399,7 +408,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 			
         // Check if any value in weatherWeights is not a number or is negative, and set a default weight if so
 		if (weatherWeights.some(weight => typeof weight !== "number" || weight < 0)) {
-            this.logger.error(`[TWS] Invalid season weights in config. All weights must be non-negative numbers.\n` +
+            this.logger.error(`[TWS] Invalid weather weights in config. All weights must be non-negative numbers.\n` +
 							  `Default weather weights of 20 set.`);
 			
 			weatherWeights = [ Default_Stormy, 
@@ -427,6 +436,143 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
         }
         throw new Error("Failed to select a weather based on weightings.")
     }
+	
+	// Test seasonLength values to see if the config wants us to skip any seasons
+	private function getSeasonTest(SeasonValues: IWeatherConfig): number {
+	
+		let seasonsToTest: number[];
+	
+		let summer = seasonLength[seasonMap[0]];
+		let autumn = seasonLength[seasonMap[1]];
+		let winter = seasonLength[seasonMap[2]];
+		let spring = seasonLength[seasonMap[3]];
+		let autumnL = seasonLength[seasonMap[4]];
+		let springE = seasonLength[seasonMap[5]];
+	
+		seasonsToTest = [ summer, autumn, winter, spring, autumnL, springE ];
+	
+		// Check if any value in seasonsToTest is zero or negative, if not, return
+		if (seasonsToTest.some(length => typeof length > 0)) {
+			console.log("All seasons active!")
+		
+			return SeasonValues.overrideSeason;
+		// If a value is not greater than 0 or a negative number then we do this
+		// monstrosity of else ifs and switches, god help me
+		} else if(SeasonValues.overrideSeason === 0){
+			switch(true) {
+				case autumn > 0:
+					 return 0;
+				case autumnL > 0:
+					 return 1;
+				case winter > 0:
+				     return 4;
+				case springE > 0:
+					 return 2;
+				case spring > 0:
+				     return 5;
+				default:
+					 // If no valid seasons forces the mod to maintain the current season and
+					 // sends a nonfatal error to the player to fix it
+					 this.logger.error(`[TWS] No valid seasons configured, skipping season change.`);
+					 return 3;
+			}
+		} else if(SeasonValues.overrideSeason === 1){
+			switch(true) {
+		
+				case autumnL > 0:
+					 return 1;
+				case winter > 0:
+					 return 4;
+				case springE > 0:
+					 return 2;
+				case spring > 0:
+					 return 5;
+				case summer > 0:
+					 return 3;
+				default:
+					 // If no valid seasons forces the mod to maintain the current season and
+					 // sends a nonfatal error to the player to fix it
+					 this.logger.error(`[TWS] No valid seasons configured, skipping season change.`);
+					 return 0;
+			}
+		} else if(SeasonValues.overrideSeason === 2){
+			switch(true) {
+		
+				case springE > 0:
+					 return 2;
+				case spring > 0:
+					 return 5;
+				case summer > 0:
+					 return 3;
+				case autumn > 0:
+					 return 0;
+				case autumnL > 0:
+					 return 1;
+				default:
+					 // If no valid seasons forces the mod to maintain the current season and
+					 // sends a nonfatal error to the player to fix it
+					 this.logger.error(`[TWS] No valid seasons configured, skipping season change.`);
+					 return 4;
+			}
+		} else if(SeasonValues.overrideSeason === 3){
+			switch(true) {
+		
+				case summer > 0:
+					 return 3;
+				case autumn > 0:
+					 return 0;
+				case autumnL > 0:
+					 return 1;
+				case winter > 0:
+					 return 4;
+				case springE > 0:
+					 return 2;
+				default:
+					 // If no valid seasons forces the mod to maintain the current season and
+					 // sends a nonfatal error to the player to fix it
+					 this.logger.error(`[TWS] No valid seasons configured, skipping season change.`);
+					 return 5;
+			}
+		} else if(SeasonValues.overrideSeason === 4){
+			switch(true) {
+		
+				case winter > 0:
+					 return 4;
+				case springE > 0:
+					 return 2;
+				case spring > 0:
+					 return 5;
+				case summer > 0:
+					 return 3;
+				case autumn > 0:
+					 return 0;
+				default:
+					 // If no valid seasons forces the mod to maintain the current season and
+					 // sends a nonfatal error to the player to fix it
+					 this.logger.error(`[TWS] No valid seasons configured, skipping season change.`);
+					 return 1;
+			}
+		} else if(SeasonValues.overrideSeason === 5){
+			switch(true) {
+		
+				case spring > 0:
+					 return 5;
+				case summer > 0:
+					 return 3;
+				case autumn > 0:
+					 return 0;
+				case autumnL > 0:
+					 return 1;
+				case winter > 0:
+					 return 4;
+				default:
+					 // If no valid seasons forces the mod to maintain the current season and
+					 // sends a nonfatal error to the player to fix it
+					 this.logger.error(`[TWS] No valid seasons configured, skipping season change.`);
+					 return 2;
+			}
+		}
+	}
 }
 
 module.exports = { mod: new TarkovWeatherSystem() };
