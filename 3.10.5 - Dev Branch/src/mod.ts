@@ -60,7 +60,7 @@ import {
 	Default_Sunny,
 	Default_FStorm,
 } from "./utlis";
-import { seasonMap, seasonDates } from "./seasons";
+import { seasonMap, seasonNameMap, seasonDates } from "./seasons";
 import { weatherMap, winterWeatherMap } from "./weathertypes";
 import { WeatherService } from "./chatbot/WeatherService";
 
@@ -138,7 +138,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	
 	enableSeasons &&
 	  this.logger.log(
-        `[TWS] Current season is: ${seasonMap[SeasonValues.overrideSeason]}`
+        `[TWS] Current season is: ${seasonNameMap[SeasonValues.overrideSeason]}`
 		LogTextColor.CYAN);
 	
 	enableWeather && !isWinter &&
@@ -250,7 +250,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             action: async (_url, info, sessionId, output) => {
 			  let testedSeason = this.getSeasonTest(SeasonValues);
 			  
-			  setSeason(SeasonValues,testedSeason);			  
+			  setSeason(SeasonValues, testedSeason);			  
 			  
               return output;
             },

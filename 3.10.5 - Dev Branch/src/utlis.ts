@@ -24,7 +24,7 @@ import {
 	windyDefault, 
 	foggyStormDefault 
 } from "./weathertypes";
-import { seasonMap, seasonDates } from "./seasons";
+import { seasonMap, seasonNameMap, seasonDates } from "./seasons";
 import { weatherMap, winterWeatherMap } from "./weathertypes";
 import * as path from "path";
 import * as fs from "fs";
@@ -91,8 +91,8 @@ let maxWeatherNumber = maxWeatherDuration;
 
 // Variables for use when first starting the server
 export const serverStarted = false;
-let minForcedWeather = minWeatherDuration / 2;
-let maxForcedWeather = maxWeatherDuration / 2;
+let minForcedWeather = 0;
+let maxForcedWeather = savedWeatherTime;
 
 // Some error checking for weather duration numbers
 if(maxWeatherDuration <= minWeatherDuration){
@@ -100,23 +100,16 @@ if(maxWeatherDuration <= minWeatherDuration){
 	//console.log("minWeatherDuration out of bounds with maxWeatherDuration, setting to 30 and 120.")
 	minWeatherNumber = 30;
 	maxWeatherNumber = 120;
-	minForcedWeather = 15;
-	maxForcedWeather = 60;
 } else if(maxWeatherDuration < 0 || minWeatherDuration < 0){
 	weatherDurationBool = true;
 	//console.log("minWeatherDuration or maxWeatherDuration detected negative numbers, setting to 30 and 120.")
 	minWeatherNumber = 30;
 	maxWeatherNumber = 120;
-	minForcedWeather = 15;
-	maxForcedWeather = 60;
 }else{
 	weatherDurationBool = false;
 	minWeatherNumber = minWeatherDuration;
 	maxWeatherNumber = maxWeatherDuration;
-	minForcedWeather = minWeatherDuration / 2;
-	maxForcedWeather = maxWeatherDuration / 2;
 };
-
 
 // Set season
 export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) => {
@@ -124,23 +117,19 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
 	let currentSeason = seasonMap[SeasonValues.overrideSeason];
 	let forcedSeason = forceSeasonType;
 	let testSeason = testedSeason;
-	//if(!endlessWinter && !foreverSummer && !forceSeasonEnd){
-		//let testSeason = seasonTest(currentSeason, SeasonValues);
-	//}
-	
 	
 	switch (enableSeasons) {
 		// Forces a change of season, luckily this works
 		case forceSeasonEnd:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = forcedSeason;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 savedTime = seasonLength[currentSeason];
                   
              consoleMessages &&
 				console.log(
                 "[TWS] The season was forced to changed! It is now:",
-                seasonMap[SeasonValues.overrideSeason]
+                seasonNameMap[SeasonValues.overrideSeason]
                 );
                 break;
 		
@@ -148,7 +137,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
 			 savedTime = 2000;
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 0;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 isWinter = false;
 
                   
@@ -162,7 +151,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
 			 savedTime = 2000;
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 2;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 isWinter = true;
 
                   
@@ -176,7 +165,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
 			 && 4 === testSeason:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 2;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 savedTime = seasonLength[currentSeason];
 			 isWinter = true;
 
@@ -184,7 +173,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              consoleMessages &&
 				console.log(
                 "[TWS] The season has changed! It is now:",
-                seasonMap[SeasonValues.overrideSeason]
+                seasonNameMap[SeasonValues.overrideSeason]
                 );
                 break;
 
@@ -192,7 +181,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              && 2 === testSeason:
              SeasonValues["last"] = Date.now();
 		     SeasonValues.overrideSeason = 5;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
@@ -200,7 +189,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              consoleMessages &&
 			    console.log(
                 "[TWS] The season has changed! It is now:",
-                seasonMap[SeasonValues.overrideSeason]
+                seasonNameMap[SeasonValues.overrideSeason]
                 );
                 break;
 				  
@@ -208,7 +197,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              && 5 === testSeason:
              SeasonValues["last"] = Date.now();
 		     SeasonValues.overrideSeason = 3;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
@@ -216,7 +205,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              consoleMessages &&
 				console.log(
                 "[TWS] The season has changed! It is now:",
-                seasonMap[SeasonValues.overrideSeason]
+                seasonNameMap[SeasonValues.overrideSeason]
                 );
                 break;
 				  
@@ -224,7 +213,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              && 3 === testSeason:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 0;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
@@ -232,15 +221,15 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              consoleMessages &&
 				console.log(
                 "[TWS] The season has changed! It is now:",
-                seasonMap[SeasonValues.overrideSeason]
+                seasonNameMap[SeasonValues.overrideSeason]
                 );
                 break;
 				  
 		case savedTime == weatherLowerClamp
-             && testSeason === 0:
+             && 0 === testSeason:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 1;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
@@ -248,15 +237,15 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              consoleMessages &&
 				console.log(
                 "[TWS] The season has changed! It is now:",
-                seasonMap[SeasonValues.overrideSeason]
+                seasonNameMap[SeasonValues.overrideSeason]
                 );
                 break;
 				  
 		case savedTime == weatherLowerClamp
-             && testSeason === 1:
+             && 1 === testSeason:
              SeasonValues["last"] = Date.now();
 			 SeasonValues.overrideSeason = 4;
-			 seasonText = seasonMap[SeasonValues.overrideSeason];
+			 seasonText = seasonNameMap[SeasonValues.overrideSeason];
 			 savedTime = seasonLength[currentSeason];
 			 isWinter = false;
 
@@ -264,7 +253,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              consoleMessages &&
 				console.log(
                 "[TWS] The season has changed! It is now:",
-                seasonMap[SeasonValues.overrideSeason]
+                seasonNameMap[SeasonValues.overrideSeason]
                 );
                 break;
 				  
@@ -281,7 +270,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
              consoleMessages &&
 				console.log(
                 "[TWS] The season is still",
-                seasonMap[SeasonValues.overrideSeason] + ".",
+                seasonNameMap[SeasonValues.overrideSeason] + ".",
                 "Time until next season:",
                 savedTime, "Minutes."
                 );
@@ -291,7 +280,7 @@ export const setSeason = (SeasonValues: IWeatherConfig, testedSeason: number) =>
 			const newSeasonData = {
 				iswinter: isWinter,
 				season: SeasonValues.overrideSeason,
-				seasontext: seasonMap[SeasonValues.overrideSeason],
+				seasontext: seasonNameMap[SeasonValues.overrideSeason],
 				seasonstart: SeasonValues["last"],
 				seasonlength: seasonLength[currentSeason],
 				seasonleft: savedTime

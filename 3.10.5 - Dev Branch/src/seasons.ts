@@ -10,6 +10,16 @@ export const seasonMap = {
   6: "STORM",
 };
 
+export const seasonNameMap = {
+  0: "Summer",
+  1: "Autumn",
+  2: "Winter",
+  3: "Spring",
+  4: "Late Autumn",
+  5: "Early Spring",
+  6: "Storm",
+};
+
 export const seasonDates: ISeasonDateTimes[] = [
   {
     seasonType: 0,

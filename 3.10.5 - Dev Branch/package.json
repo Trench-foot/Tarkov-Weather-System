@@ -1,6 +1,6 @@
 {
   "name": "Tarkov Weather System",
-  "version": "0.9.9",
+  "version": "0.9.9.5",
   "main": "src/mod.js",
   "license": "MIT",
   "sptVersion": "^3.10.x",
