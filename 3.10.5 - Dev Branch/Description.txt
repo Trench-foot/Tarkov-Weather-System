@@ -1,0 +1,49 @@
+Tired of having to wait for days and weeks to pass for the changing of the seasons? Tired of a lack of variety in the weather of Tarkov? Well look no further! With Tarkov Weather System you will get both a configurable passage of seasons, experience them as quickly or slowly as you desire. You will also get custom weather with different probabilities for each season, also highly configurable.
+
+Each season has a time limit measured in real world minutes, and the mod remembers what was the last season and how long it has been sense it started. The same can be said about the weather of the mod. Both of these values can be configured, your seasons and chosen weather can last as long as you want.
+
+Tarkov Weather System includes a custom chatbot, the Tarkov Weather Service, that can be interacted with to get the current weather and season. Also this chatbot allows you to force whatever season and weather you want while in game. This integrates seamlessly with the rest of the mod and allows you to skip weather or seasons in game whenever you want.
+
+The default configuration of the mod reflects a 7 day year for the passage of the seasons. Weather by default lasts between 30 to 180 minutes. The reasoning for the weather time frame is that a full 24 hours of ingame time of Tarkov lasts just under 3 real world hours. The weather is chosen at random, so it is entirely possible to have multiple repeats currently of the weather.
+
+You can disable the mod at anytime, or just use part of it, want the seasons, but not the weather changes? Can do! Vise verses? Sure why not! Want summer to never end? Can do!
+
+
+
+config:
+
+enable = turns the mod on or off.
+enableSeasons = Turns the seasons portion of the mod on or off.
+enableWeather = Turns the weather portion of the mod on or off.
+foreverSummer = Sets the season to a permanent summer. In other words makes the mod ignore the values set under seasonLength.
+endlessWinter = Sets the season to a permanent winter. In other words makes the mod ignore the values set under seasonLength.
+enableChatbot = The chatbot can now be disabled if you don't want it.
+seasonLength = These values are set in minutes, real world. The default values for the mod set the year to a 7 day cycle. A value of 0 should work, but I have not tested it.
+minWeatherDuration = This value is in minutes, sets the minimum duration of any weather that the mod sets.
+maxWeatherDuration = This value is in minutes, sets the maximum duration of any weather that the mod sets.
+Both of these values can be set to pretty much anything you want. If you enter a negative number or make the min larger than the max a default value of 30 and 120 will be applied respectively. It will also produce an error message in the console telling you that it has happened.
+resetWeather = This is probably defunct but it sets the weather to default spt profile. Its more for testing purposes than anything else.
+debugEnable = Causes the mod to check the weather and season every time the launcher sends a message to the server, might cause some lag if you leave it enabled long term, once again, mostly for testing purposes.
+consoleMessages = This setting turned on will cause the mod to write each check and change of weather/season to the server console. Currently the only way to see the duration of any weather or season left without having to go look at the mods db files. Without debugEnabled, it only does the checks when first logging on, when logging out and at the end of matchs.
+
+
+weather configs:
+
+The weather uses a weighted choice, so you can place your desired weather at a higher chance. Only use positive values, including 0 should work. The mod will apply a default value of 20 for each weather type if negative numbers are used. A console error message will tell you what has happened.
+Stormy = Heavy rain or snow depending on the season.
+Foggy = Overcast with light to heavy fog.
+Windy = Can be overcast or sunny, possibly light rain, but the main defining feature is that its very windy.
+Misty = Overcast with light to heavy fog and light rain.
+SunFog = Clear sky with medium to heavy fog.
+Sunny = Clear sky, no rain, no fog, light to medium wind.
+FStorm = Heavy fog with heavy rain or snow depending on the season.
+FStorm/Blizzard gets pretty nuts on a night raid with pmcs and scavs fading in and out of the fog. Forget sniping in heavy fog.
+
+
+
+chatbot:
+
+
+Tarkov Weather Service can be used to force weather or season, to get the current weather and/or season.
+
+To get a list of commands type pretty much anything into the chat box and it will return a list.

@@ -39,7 +39,6 @@ import {
 	WeatherValues,
 	SeasonValues,
 	isWinter,
-	defaultSeason,
 	savedSeason,
 	savedDate,
 	setSeason, 
@@ -87,45 +86,18 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	let differenceSeasonDate = (Date.now() - savedDate);
 	let serverSeasonDate = (Date.now() - differenceSeasonDate);
 	
-
-	WeatherValues.seasonDates = seasonDates;
-	SeasonValues.seasonDates = seasonDates;
-
+    WeatherValues.seasonDates = seasonDates;
+    SeasonValues.seasonDates = seasonDates;
 	
     const staticRouterModService = container.resolve<StaticRouterModService>(
       "StaticRouterModService"
     );
 	
-	// Pick either the saved season or the default season on server start
-	if(enableSeasons)
-	{
-		SeasonValues["last"] = serverSeasonDate;
-		SeasonValues.overrideSeason = savedSeason;
-	}else
-	{
-		SeasonValues.overrideSeason = defaultSeason;
-	}
-	
-	if(enableSeasons)
-	{
-		WeatherValues["last"] = serverSeasonDate;
-		WeatherValues.overrideSeason = savedSeason;
-	}else
-	{
-		WeatherValues["last"] = serverSeasonDate;
-		WeatherValues.overrideSeason = defaultSeason;
-	}
-	
-    // Set summer or winter if those bools are set
-	if(foreverSummer)
-	{
-		setSeason(SeasonValues, testedSeason);
-	}
-	
-	if(endlessWinter)
-	{
-		setSeason(SeasonValues, testedSeason);
-	}
+	// Make sure the saved season is set by the mod on load
+    WeatherValues["last"] = serverSeasonDate;
+    SeasonValues["last"] = serverSeasonDate;
+    WeatherValues.overrideSeason = savedSeason;
+	SeasonValues.overrideSeason = savedSeason;
 	
 	// Resets the weather value back to default
 	resetWeather &&
@@ -141,7 +113,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	forceWeatherEnd = false;
 	serverStarted = false;
 	
-	if(savedSeason == 2 || defaultSeason == 2) {
+	if(savedSeason == 2) {
 		isWinter = true;
 	} else {
 		isWinter = false;
@@ -164,7 +136,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	  this.logger.log(
         `[TWS] Brace yourself, winter is here....`
 		LogTextColor.YELLOW);
-	!foreverSummer && !endlessWinter &&
+	
+	enableSeasons &&
 	  this.logger.log(
         `[TWS] Current season is: ${seasonNameMap[SeasonValues.overrideSeason]}`
 		LogTextColor.CYAN);

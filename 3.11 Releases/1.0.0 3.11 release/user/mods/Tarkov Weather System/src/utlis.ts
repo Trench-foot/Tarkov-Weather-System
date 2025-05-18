@@ -35,14 +35,7 @@ export const seasonPath = path.resolve(path.dirname(__filename), "./db/season.js
 
 // For whatever reason this not being here breaks the mod, just go with it
 export const weather;
-export const testedSeason;
-
-// Get system Date
-const currentDate = new Date();
-const month = currentDate.getMonth() + 1; // getMonth() returns 0-11, so add 1
-
-// Set season based on system date for people who don't use the season setting
-export const defaultSeason = getSeasonBasedOnDate();
+export const testedSeason;			  
 
 // To send some config settings to the chatbot, I couldn't figure out how to have
 // the chatbot pull from the config itself
@@ -756,44 +749,6 @@ export const forceWeather = (WeatherValues: IWeatherConfig, forcedWeather: numbe
 
 			fs.writeFileSync(weatherPath, JSON.stringify(newWeatherData, null, 4));
 			// End weather save data
-};
-
-// Shamelessly stolen from the Southern Hemisphere mod, hope they don't mind
-private function getSeasonBasedOnDate(): number {
-
-    // Summer: June - August
-    if (month === 6 || month === 7 || month === 8) 
-	{
-        return 0; // Summer
-    }
-    // Autumn: September - October
-    else if (month === 9 || month === 10) 
-	{
-        return 1; // Autumn
-    }
-    // Late Autumn: November
-    else if (month === 11) 
-	{
-        return 4; // Late Autumn
-    }
-    // Winter: December - Febuary
-    else if (month === 12 || month === 1 || month === 2) 
-	{
-        return 2; // Winter
-    }
-    // Early Spring: March
-    else if (month === 3) 
-	{
-        return 5; // Early Spring
-    }
-    // Spring: April - May
-    else if (month === 4 || month === 5) 
-	{
-        return 3; // Spring
-    }
-
-    // Default to Summer if no season matches (should not happen)
-    return 0;
 };
 
 // Read JSON files
