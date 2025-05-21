@@ -1,16 +1,14 @@
+/* eslint-disable @typescript-eslint/indent */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/quotes */
+/* eslint-disable no-mixed-spaces-and-tabs */
 // Attempt at moving weatherservice response text from the functions
 //import { enable, enableSeasons, enableWeather } from ".../config/config.json";
 import { 
   SeasonValues, 
   savedWeather, 
   savedSeason, 
-  isWinter, 
-  seasonText, 
-  forceWeatherEnd, 
-  forceWeatherType, 
-  forceWeatherText,
-  forceSeasonEnd,
-  forceSeasonType,
+  seasonText
   } from "../utlis";
 import { weatherMap, winterWeatherMap } from "../weathertypes";
 
@@ -34,7 +32,9 @@ export const testText = `This is Bolt Lightning with a list of commands!  Your n
 						`Force Late Autumn\n` +
 						`Force Early Spring\n`;
 
+// eslint-disable-next-line @typescript-eslint/quotes
 export const winterForecast = `This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
+							  // eslint-disable-next-line no-mixed-spaces-and-tabs
 							  `Current season is: ${seasonText}\n` +
 							  `Current weather is: ${winterWeatherMap[savedWeather]}`;
 

@@ -1,9 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/quotes */
+/* eslint-disable @typescript-eslint/func-call-spacing */
+/* eslint-disable @typescript-eslint/comma-dangle */
+/* eslint-disable @typescript-eslint/keyword-spacing */
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable no-mixed-spaces-and-tabs */
+/* eslint-disable @typescript-eslint/brace-style */
+/* eslint-disable @typescript-eslint/indent */
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer } from "tsyringe";
 import { IPreSptLoadMod } from "@spt/models/external/IPreSptLoadMod";
 import { IPostDBLoadMod } from "@spt/models/external/IPostDBLoadMod";
 import { DialogueController } from "@spt/controllers/DialogueController";
-import { CustomChatBot } from "./CustomChatBot";
+//import { CustomChatBot } from "./CustomChatBot";
 import { ILogger } from "@spt/models/spt/utils/ILogger";
 import { LogTextColor } from "@spt/models/spt/logging/LogTextColor";
 import { LogBackgroundColor } from "@spt/models/spt/logging/LogBackgroundColor";
@@ -12,7 +22,6 @@ import { ConfigTypes } from "@spt/models/enums/ConfigTypes";
 import { ICoreConfig } from "@spt/models/spt/config/ICoreConfig";
 import { IWeatherConfig } from "@spt/models/spt/config/IWeatherConfig";
 import { StaticRouterModService } from "@spt/services/mod/staticRouter/StaticRouterModService";
-import * as fs from "fs";
 
 // various config files
 import {
@@ -35,10 +44,9 @@ import { Se_Stormy, Se_Foggy, Se_Windy, Se_Misty, Se_SunFog, Se_Sunny, Se_FStorm
 
 // imports from other ts files
 import { 
-	serverStarted,
+	exportVariables,
 	WeatherValues,
 	SeasonValues,
-	isWinter,
 	defaultSeason,
 	savedSeason,
 	savedDate,
@@ -50,9 +58,6 @@ import {
 	weatherDuration,
 	savedWeatherTime,
 	savedWeather,
-	forceWeatherEnd,
-	forceWeatherType,
-	forceSeasonEnd,
 	weatherDurationBool,
 	Default_Stormy,
 	Default_Foggy,
@@ -71,10 +76,12 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
   
   // Logger instance
   private logger: ILogger;
-  
+
   preSptLoad(container: DependencyContainer): void {
 	this.logger = container.resolve<ILogger>("WinstonLogger");
-	
+
+	//const exportVariables = new ExportVariables(false, false, 0, "...FStormy", false, false, 0);
+
     const configServer = container.resolve<ConfigServer>("ConfigServer");
     let WeatherValues = configServer.getConfig<IWeatherConfig>(
       ConfigTypes.WEATHER
@@ -132,19 +139,19 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
       setWeather(WeatherValues, 8);
 	  
 	// Force previously saved weather at server start
-	if(!forceWeatherEnd){
-		serverStarted = true;
-		forceWeatherEnd = true;
+	if(!exportVariables.forceWeatherEnd){
+		exportVariables.serverStarted = true;
+		exportVariables.forceWeatherEnd = true;
 		forceWeather(WeatherValues, savedWeather);
 	}
 	
-	forceWeatherEnd = false;
-	serverStarted = false;
+	exportVariables.forceWeatherEnd = false;
+	exportVariables.serverStarted = false;
 	
 	if(savedSeason == 2 || defaultSeason == 2) {
-		isWinter = true;
+		exportVariables.isWinter = true;
 	} else {
-		isWinter = false;
+		exportVariables.isWinter = false;
 	}
 	
 	enable && weatherDurationBool &&
@@ -152,31 +159,31 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	
 	enable && !foreverSummer && !endlessWinter &&
 	  this.logger.log(
-        `[TWS] Loaded....`
+        `[TWS] Loaded....`,
 		LogTextColor.YELLOW);
 		
 	enable && foreverSummer &&
 	  this.logger.log(
-        `[TWS] Oh you sweet summer child....`
+        `[TWS] Oh you sweet summer child....`,
 		LogTextColor.YELLOW);
 		
 	enable && endlessWinter &&
 	  this.logger.log(
-        `[TWS] Brace yourself, winter is here....`
+        `[TWS] Brace yourself, winter is here....`,
 		LogTextColor.YELLOW);
 	!foreverSummer && !endlessWinter &&
 	  this.logger.log(
-        `[TWS] Current season is: ${seasonNameMap[SeasonValues.overrideSeason]}`
+        `[TWS] Current season is: ${seasonNameMap[SeasonValues.overrideSeason]}`,
 		LogTextColor.CYAN);
 	
-	enableWeather && !isWinter &&
+	enableWeather && !exportVariables.isWinter &&
 	  this.logger.log(
-		`[TWS] Last weather front was: ${weatherMap[savedWeather]}`
+		`[TWS] Last weather front was: ${weatherMap[savedWeather]}`,
 		LogTextColor.CYAN);
 	
-	enableWeather && isWinter &&
+	enableWeather && exportVariables.isWinter &&
 	  this.logger.log(
-		`[TWS] Last weather front was: ${winterWeatherMap[savedWeather]}`
+		`[TWS] Last weather front was: ${winterWeatherMap[savedWeather]}`,
 		LogTextColor.CYAN);
 	
 	// Set season and weather during client/items callback
@@ -319,8 +326,8 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
             url: "/client/mail/msg/send",
             action: async (_url, info, sessionId, output) => {
 			
-			if (forceWeatherEnd && enableWeather) {
-				let weather = forceWeatherType;
+			if (exportVariables.forceWeatherEnd && enableWeather) {
+				let weather = exportVariables.forceWeatherType;
 			
 				forceWeather(WeatherValues, weather);
 			
@@ -328,14 +335,14 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 				  console.log(weather);
 				}
 				
-			if (forceSeasonEnd && enableSeasons) {
+			if (exportVariables.forceSeasonEnd && enableSeasons) {
 				let testedSeason = this.getSeasonTest(SeasonValues);
 				setSeason(SeasonValues, testedSeason);
 				}
 				
-			forceSeasonEnd = false;
+			exportVariables.forceSeasonEnd = false;
 				
-			forceWeatherEnd = false;
+			exportVariables.forceWeatherEnd = false;
 			
 			return output;
             },
@@ -470,7 +477,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 	}
 	
 	// Test seasonLength values to see if the config wants us to skip any seasons
-	private function getSeasonTest(SeasonValues: IWeatherConfig): number {
+	private getSeasonTest(SeasonValues: IWeatherConfig): number {
 	
 		let seasonsToTest: number[];
 	
@@ -484,7 +491,7 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 		seasonsToTest = [ summer, autumn, winter, spring, autumnL, springE ];
 	
 		// Check if any value in seasonsToTest is zero or negative, if not, return
-		if (seasonsToTest.some(length => typeof length > 0)) {
+		if (seasonsToTest.some(length => typeof length !== "number" || length > 0)) {
 		  consoleMessages &&
 			console.log("All seasons active!")
 		
@@ -617,6 +624,6 @@ class TarkovWeatherSystem implements IPreSptLoadMod, IPostDBLoadMod {
 					 return 2;
 			}
 		}
+	}
 }
-
-module.exports = { mod: new TarkovWeatherSystem() };
+export const mod = new TarkovWeatherSystem();

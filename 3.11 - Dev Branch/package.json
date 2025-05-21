@@ -1,12 +1,12 @@
 {
   "name": "Tarkov Weather System",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "src/mod.js",
   "license": "MIT",
   "sptVersion": "^3.11.x",
   "scripts": {
     "setup": "npm i",
-    "build": "node ./packageBuild.ts"
+    "build": "node ./build.mjs"
   },
   "devDependencies": {
     "@types/node": "20.11",

@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/brace-style */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/keyword-spacing */
+/* eslint-disable @typescript-eslint/quotes */
+/* eslint-disable @typescript-eslint/indent */
 import { inject, injectable } from "tsyringe";
 
 import { IDialogueChatBot } from "@spt/helpers/Dialogue/IDialogueChatBot";
@@ -15,13 +21,8 @@ import {
   savedSeason,
   savedTime,
   savedWeatherTime,
-  isWinter, 
   seasonText, 
-  forceWeatherEnd, 
-  forceWeatherType, 
-  forceWeatherText,
-  forceSeasonEnd,
-  forceSeasonType,
+  exportVariables
   } from "../utlis";
 import { weatherMap, winterWeatherMap } from "../weathertypes";
 
@@ -30,7 +31,7 @@ import { seasonMap } from "../seasons";
 import { 
   testText, 
   winterForecast,
-  notWinterForecast,
+  notWinterForecast
   } from "./WeatherResponses";
 
 
@@ -38,8 +39,10 @@ import {
 @injectable()
 export class WeatherService implements IDialogueChatBot
 {
+	
+
     constructor(
-        @inject("MailSendService") protected mailSendService: MailSendService,
+        @inject("MailSendService") protected mailSendService: MailSendService
     )
     {}
 
@@ -49,11 +52,12 @@ export class WeatherService implements IDialogueChatBot
             _id: "6725eea2f238904716f89a08",
             aid: 7821004,
             Info: {
-                Level: 1,
-                MemberCategory: MemberCategory.SHERPA,
-                Nickname: "Tarkov Weather Service",
-                Side: "Usec",
-            },
+				Level: 1,
+				MemberCategory: MemberCategory.SHERPA,
+				Nickname: "Tarkov Weather Service",
+				Side: "Usec",
+				SelectedMemberCategory: MemberCategory.DEFAULT
+			}
         };
     }
 	
@@ -61,18 +65,21 @@ export class WeatherService implements IDialogueChatBot
 	
    public handleMessage(sessionId: string, request: ISendMessageRequest): string
     {
+		//const exportVariables = new ExportVariables(false, false, 0, "...FStormy", false, false, 0);
+
 		// This whole switch function is way too long IMO
 		// I should probably find a better way
-		switch(chatbotEnabled) {
+		switch (chatbotEnabled) 
+		{
 			
 			case request.text === "forecast" && seasonsEnabled && weatherEnabled:
-				if(isWinter) {
+				if(exportVariables.isWinter) {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
 						`This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
 						`Currently ${seasonText} is expected to continue for another ${savedTime} minutes.\n` +
-						`${winterWeatherMap[savedWeather]} conditions are expect to continue for another ${savedWeatherTime} minutes.`,
+						`${winterWeatherMap[savedWeather]} conditions are expect to continue for another ${savedWeatherTime} minutes.`
 					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
@@ -80,327 +87,330 @@ export class WeatherService implements IDialogueChatBot
 						this.getChatBot(),
 						`This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
 						`Currently ${seasonText} is expected to continue for another ${savedTime} minutes.\n` +
-						`${weatherMap[savedWeather]} conditions are expect to continue for another ${savedWeatherTime} minutes.`,
-				);
+						`${weatherMap[savedWeather]} conditions are expect to continue for another ${savedWeatherTime} minutes.`
+					);
 				}
 			return request.dialogId;
 			break;
 			
 			case request.text === "forecast" && seasonsEnabled:
-				if(isWinter) {
+				if(exportVariables.isWinter) {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
 						`This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
-						`$Currently {seasonText} is expected to continue for another ${savedTime} minutes.`,
+						`$Currently {seasonText} is expected to continue for another ${savedTime} minutes.`
 					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
 						`This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
-						`$Currently {seasonText} is expected to continue for another ${savedTime} minutes.`,
-				);
+						`$Currently {seasonText} is expected to continue for another ${savedTime} minutes.`
+					);
 				}
 			return request.dialogId;
 			break;
 			
 			case request.text === "forecast" && weatherEnabled:
-				if(isWinter) {
+				if(exportVariables.isWinter) {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
 						`This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
-						`${winterWeatherMap[savedWeather]} conditions are expect to continue for another ${savedWeatherTime} minutes.`,
+						`${winterWeatherMap[savedWeather]} conditions are expect to continue for another ${savedWeatherTime} minutes.`
 					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
 						`This is Bolt Lightning!  Your number one weather man in Tarkov.\n` +
-						`${weatherMap[savedWeather]} conditions are expect to continue for another ${savedWeatherTime} minutes.`,
-				);
+						`${weatherMap[savedWeather]} conditions are expect to continue for another ${savedWeatherTime} minutes.`
+					);
 				}
 			return request.dialogId;
 			break;
 			
 			case request.text == "Force Stormy":
-				forceWeatherEnd = true;
-				forceWeatherType = 0;
+				exportVariables.forceWeatherEnd = true;
+				exportVariables.forceWeatherType = 0;
 				
 				if(!weatherEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Weather changes disabled, enable in config.`,
-				);
-				} else if(isWinter) {
+						`Weather changes disabled, enable in config.`
+					);
+				} else if(exportVariables.isWinter) {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing heavy snow`,
-				);
+						`Forcing heavy snow`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing storms`,
+						`Forcing storms`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Foggy":
-				forceWeatherEnd = true;
-				forceWeatherType = 1;
+				exportVariables.forceWeatherEnd = true;
+				exportVariables.forceWeatherType = 1;
 				
 				if(!weatherEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Weather changes disabled, enable in config.`,
-				);
+						`Weather changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing fog`,
-				);
+						`Forcing fog`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Windy":
-				forceWeatherEnd = true;
-				forceWeatherType = 2;
+				exportVariables.forceWeatherEnd = true;
+				exportVariables.forceWeatherType = 2;
 				
 				if(!weatherEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Weather changes disabled, enable in config.`,
-				);
+						`Weather changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing high winds`,
-				);
+						`Forcing high winds`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Misty":
-				forceWeatherEnd = true;
-				forceWeatherType = 3;
+				exportVariables.forceWeatherEnd = true;
+				exportVariables.forceWeatherType = 3;
 				
 				if(!weatherEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Weather changes disabled, enable in config.`,
-				);
-				} else if(isWinter) {
+						`Weather changes disabled, enable in config.`
+					);
+				} else if(exportVariables.isWinter) {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing ,misty light snow`,
-				);
+						`Forcing ,misty light snow`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing ,misty light rain`,
+						`Forcing ,misty light rain`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Foggy Sunny":
-				forceWeatherEnd = true;
-				forceWeatherType = 4;
+				exportVariables.forceWeatherEnd = true;
+				exportVariables.forceWeatherType = 4;
 				
 				if(!weatherEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Weather changes disabled, enable in config.`,
-				);
+						`Weather changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing sunny fog`,
-				);
+						`Forcing sunny fog`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Sunny":
-				forceWeatherEnd = true;
-				forceWeatherType = 5;
+				exportVariables.forceWeatherEnd = true;
+				exportVariables.forceWeatherType = 5;
 				
 				if(!weatherEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Weather changes disabled, enable in config.`,
-				);
+						`Weather changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing sunny`,
-				);
+						`Forcing sunny`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Foggy Stormy":
-				forceWeatherEnd = true;
-				forceWeatherType = 6;
+				exportVariables.forceWeatherEnd = true;
+				exportVariables.forceWeatherType = 6;
 				
 				if(!weatherEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Weather changes disabled, enable in config.`,
-				);
-				} else if(isWinter) {
+						`Weather changes disabled, enable in config.`
+					);
+				} else if(exportVariables.isWinter) {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing blizzards`,
-				);
+						`Forcing blizzards`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing heavy storms and fog`,
+						`Forcing heavy storms and fog`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Summer":
-				forceSeasonEnd = true;
-				forceSeasonType = 0;
-				isWinter = false;
+				exportVariables.forceSeasonEnd = true;
+				exportVariables.forceSeasonType = 0;
+				exportVariables.isWinter = false;
 				
 				if(!seasonsEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Season changes disabled, enable in config.`,
-				);
+						`Season changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing summer`,
-				);
+						`Forcing summer`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Autumn":
-				forceSeasonEnd = true;
-				forceSeasonType = 1;
-				isWinter = false;
+				exportVariables.forceSeasonEnd = true;
+				exportVariables.forceSeasonType = 1;
+				exportVariables.isWinter = false;
 				
 				if(!seasonsEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Season changes disabled, enable in config.`,
-				);
+						`Season changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing autumn`,
-				);
+						`Forcing autumn`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Winter":
-				forceSeasonEnd = true;
-				forceSeasonType = 2;
-				isWinter = true;
+				exportVariables.forceSeasonEnd = true;
+				exportVariables.forceSeasonType = 2;
+				exportVariables.isWinter = true;
 				
 				if(!seasonsEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Season changes disabled, enable in config.`,
-				);
+						`Season changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing winter`,
-				);
+						`Forcing winter`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Spring":
-				forceSeasonEnd = true;
-				forceSeasonType = 3;
-				isWinter = false;
+				exportVariables.forceSeasonEnd = true;
+				exportVariables.forceSeasonType = 3;
+				exportVariables.isWinter = false;
 				
 				if(!seasonsEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Season changes disabled, enable in config.`,
-				);
+						`Season changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing spring`,
-				);
+						`Forcing spring`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Late Autumn":
-				forceSeasonEnd = true;
-				forceSeasonType = 4;
-				isWinter = false;
+				exportVariables.forceSeasonEnd = true;
+				exportVariables.forceSeasonType = 4;
+				exportVariables.isWinter = false;
 				
 				if(!seasonsEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Season changes disabled, enable in config.`,
-				);
+						`Season changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing late autumn`,
-				);
+						`Forcing late autumn`
+					);
 				}
 				return request.dialogId;
 				break;
 				
 			case request.text == "Force Early Spring":
-				forceSeasonEnd = true;
-				forceSeasonType = 5;
-				isWinter = false;
+				exportVariables.forceSeasonEnd = true;
+				exportVariables.forceSeasonType = 5;
+				exportVariables.isWinter = false;
 				
 				if(!seasonsEnabled){
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Season changes disabled, enable in config.`,
-				);
+						`Season changes disabled, enable in config.`
+					);
 				} else {
 					this.mailSendService.sendUserMessageToPlayer(
 						sessionId,
 						this.getChatBot(),
-						`Forcing early spring`,
-				);
+						`Forcing early spring`
+					);
 				}
 				return request.dialogId;
 				break;
@@ -410,7 +420,7 @@ export class WeatherService implements IDialogueChatBot
 					sessionId,
 					this.getChatBot(),
 					testText
-			);
+				);
 			return request.dialogId;
 			break;
 		}
